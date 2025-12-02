@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Геометрия: Подобие треугольников</title>
+    
+    <script>
+        MathJax = {
+          tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']]
+          }
+        };
+    </script>
+    <script id="MathJax-script" async
+            src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #000000;
+            color: #ffffff;
+            line-height: 1.6;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(74, 158, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(74, 158, 255, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(74, 158, 255, 0.06) 0%, transparent 50%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(74, 158, 255, 0.03) 2px, rgba(74, 158, 255, 0.03) 4px),
+                repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(74, 158, 255, 0.03) 2px, rgba(74, 158, 255, 0.03) 4px);
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
+        body.light-theme {
+            background-color: #ffffff;
+            color: #000000;
+        }
+
+        body.light-theme::before {
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(74, 158, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(74, 158, 255, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(74, 158, 255, 0.10) 0%, transparent 50%);
+        }
+
+        body.light-theme::after {
+            background-image: 
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(74, 158, 255, 0.05) 2px, rgba(74, 158, 255, 0.05) 4px),
+                repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(74, 158, 255, 0.05) 2px, rgba(74, 158, 255, 0.05) 4px);
+            opacity: 0.5;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            border-bottom: 2px solid #333;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #ffffff;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.1);
+        }
+
+        body.light-theme header {
+            border-bottom-color: #ddd;
+        }
+
+        body.light-theme h1 {
+            color: #000000;
+        }
+
+        /* --- СТИЛИ МЕНЮ (добавлены из main.html) --- */
+        .menu-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            z-index: 1001;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            padding: 8px;
+            background-color: #000000;
+            border-radius: 5px;
+        }
+
+        .menu-toggle span {
+            display: block;
+            height: 3px;
+            width: 100%;
+            background-color: #ffffff;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .menu-toggle:hover {
+            background-color: #1a1a1a;
+        }
+
+        .sidebar-menu {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 300px;
+            height: 100vh;
+            background-color: #111111;
+            border-right: 2px solid #333;
+            transition: left 0.3s ease;
+            z-index: 1000;
+            padding: 80px 20px 20px 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-menu.active {
+            left: 0;
+        }
+
+        .menu-item {
+            display: block;
+            padding: 15px 20px;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 1.1em;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            background-color: #1a1a1a;
+            transition: all 0.3s ease;
+        }
+
+        .menu-item:hover {
+            background-color: #2a2a2a;
+            transform: translateX(5px);
+        }
+
+        .menu-credit {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            text-align: center;
+            color: #888;
+            font-size: 0.85em;
+            padding-top: 20px;
+            border-top: 1px solid #333;
+        }
+
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+
+        .menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        /* --- КОНЕЦ СТИЛЕЙ МЕНЮ --- */
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #000000;
+            border: none;
+            cursor: pointer;
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: all 0.3s ease;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        .theme-toggle:hover {
+            background-color: #1a1a1a;
+            transform: scale(1.1);
+        }
+
+        /* --- СТИЛИ СВЕТЛОЙ ТЕМЫ (добавлены стили меню) --- */
+        body.light-theme .menu-toggle {
+            background-color: #ffffff;
+            border: 2px solid #000000;
+        }
+
+        body.light-theme .menu-toggle span {
+            background-color: #000000;
+        }
+
+        body.light-theme .sidebar-menu {
+            background-color: #f5f5f5;
+            border-right-color: #ddd;
+        }
+
+        body.light-theme .menu-item {
+            background-color: #ffffff;
+            color: #000000;
+            border: 1px solid #ddd;
+        }
+
+        body.light-theme .menu-item:hover {
+            background-color: #e5e5e5;
+        }
+        
+        body.light-theme .menu-credit {
+            color: #666;
+            border-top-color: #ddd;
+        }
+
+        body.light-theme .theme-toggle {
+            background-color: #ffffff;
+            border: 2px solid #000000;
+        }
+
+        body.light-theme .theme-toggle:hover {
+            background-color: #f5f5f5;
+        }
+        /* --- КОНЕЦ СТИЛЕЙ СВЕТЛОЙ ТЕМЫ --- */
+
+        .article-content {
+            background-color: #111111;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 30px;
+        }
+
+        body.light-theme .article-content {
+            background-color: #f9f9f9;
+            border-color: #ddd;
+        }
+
+        .article-content h2 {
+            font-size: 2em;
+            color: #4a9eff;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #333;
+        }
+
+        body.light-theme .article-content h2 {
+            color: #0056b3;
+            border-bottom-color: #ddd;
+        }
+
+        .article-content h3 {
+            font-size: 1.5em;
+            color: #ffffff;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+
+        body.light-theme .article-content h3 {
+            color: #000000;
+        }
+
+        .article-content p, .article-content li {
+            font-size: 1.1em;
+            margin-bottom: 15px;
+        }
+
+        .article-content ul {
+            padding-left: 30px;
+        }
+
+        .formula {
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.1em;
+            overflow-x: auto;
+            color: #cddc39;
+        }
+
+        body.light-theme .formula {
+            background-color: #eeeeee;
+            border-color: #ddd;
+            color: #333;
+        }
+
+        .example {
+            background-color: #1a1a1a;
+            border-left: 4px solid #4a9eff;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+        }
+
+        body.light-theme .example {
+            background-color: #f5f5f5;
+            border-color: #0056b3;
+        }
+
+        .example p {
+            margin-bottom: 10px;
+        }
+
+        /* --- ДОБАВЛЕННЫЕ СТИЛИ БАННЕРА --- */
+        .support-banner {
+            background: linear-gradient(135deg, rgba(74, 158, 255, 0.1) 0%, rgba(74, 158, 255, 0.05) 100%);
+            border-top: 2px solid rgba(74, 158, 255, 0.3);
+            border-bottom: 2px solid rgba(74, 158, 255, 0.3);
+            padding: 25px 20px;
+            margin-top: 40px;
+            text-align: center;
+            color: #ccc;
+        }
+
+        .support-banner h3 {
+            margin: 0 0 10px 0;
+            color: #4a9eff;
+            font-size: 1.2em;
+        }
+
+        .support-banner p {
+            margin: 5px 0;
+            color: #aaa;
+        }
+
+        .support-banner a {
+            color: #4a9eff;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        .support-banner a:hover {
+            color: #6bb0ff;
+            text-decoration: underline;
+        }
+
+        body.light-theme .support-banner {
+            background: linear-gradient(135deg, rgba(74, 158, 255, 0.15) 0%, rgba(74, 158, 255, 0.08) 100%);
+            border-top-color: rgba(74, 158, 255, 0.4);
+            border-bottom-color: rgba(74, 158, 255, 0.4);
+            color: #333;
+        }
+
+        body.light-theme .support-banner h3 {
+            color: #0066cc;
+        }
+
+        body.light-theme .support-banner p {
+            color: #555;
+        }
+
+        body.light-theme .support-banner a {
+            color: #0066cc;
+        }
+
+        body.light-theme .support-banner a:hover {
+            color: #0080ff;
+        }
+        /* --- КОНЕЦ СТИЛЕЙ БАННЕРА --- */
+        
+        footer {
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 0; /* Изменено с 40px на 0 */
+            border-top: 2px solid #333;
+            color: #888;
+        }
+
+        body.light-theme footer {
+            border-top-color: #ddd;
+            color: #666666;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="menu-toggle" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div class="theme-toggle" onclick="toggleTheme()" id="themeToggle">🌙</div>
+        <div class="menu-overlay" onclick="toggleMenu()"></div>
+        <div class="sidebar-menu" id="sidebarMenu">
+            <a href="../main.html" class="menu-item">На главную</a>
+            <div class="menu-credit">
+                &copy; 2025 Математика для школьников
+            </div>
+        </div>
+        <header>
+            <h1>📐 Подобие треугольников</h1>
+        </header>
+
+        <div class="article-content">
+            <h2>Что такое подобные треугольники?</h2>
+            <p>Два треугольника называются <strong>подобными</strong>, если их углы соответственно равны, а стороны одного треугольника пропорциональны сходственным сторонам другого.</p>
+            <p>Это значит, что если треугольник $\triangle ABC$ подобен треугольнику $\triangle A_1B_1C_1$ (обозначается $\triangle ABC \sim \triangle A_1B_1C_1$), то:</p>
+            <ul>
+                <li>$\angle A = \angle A_1$, $\angle B = \angle B_1$, $\angle C = \angle C_1$</li>
+                <li>$\frac{AB}{A_1B_1} = \frac{BC}{B_1C_1} = \frac{AC}{A_1C_1} = k$</li>
+            </ul>
+            <p>Число $k$ называется <strong>коэффициентом подобия</strong>.</p>
+
+            <h2>Признаки подобия треугольников</h2>
+            <p>Чтобы доказать, что два треугольника подобны, не обязательно проверять все шесть условий (три угла и три стороны). Достаточно воспользоваться одним из трех признаков подобия.</p>
+
+            <h3>1. По двум углам (Первый признак)</h3>
+            <p><strong>Если два угла одного треугольника соответственно равны двум углам другого треугольника, то такие треугольники подобны.</strong></p>
+            <p>Это самый часто используемый признак. Если $\angle A = \angle A_1$ и $\angle B = \angle B_1$, то $\triangle ABC \sim \triangle A_1B_1C_1$. (Третьи углы у них также будут равны, так как сумма углов треугольника всегда 180°).</p>
+
+            <h3>2. По двум сторонам и углу между ними (Второй признак)</h3>
+            <p><strong>Если две стороны одного треугольника пропорциональны двум сторонам другого треугольника, а углы, заключенные между этими сторонами, равны, то такие треугольники подобны.</strong></p>
+            <div class="formula">
+                Если $\frac{AB}{A_1B_1} = \frac{AC}{A_1C_1}$ и $\angle A = \angle A_1$, то $\triangle ABC \sim \triangle A_1B_1C_1$.
+            </div>
+
+            <h3>3. По трем сторонам (Третий признак)</h3>
+            <p><strong>Если три стороны одного треугольника пропорциональны трем сходственным сторонам другого треугольника, то такие треугольники подобны.</strong></p>
+            <div class="formula">
+                Если $\frac{AB}{A_1B_1} = \frac{BC}{B_1C_1} = \frac{AC}{A_1C_1}$, то $\triangle ABC \sim \triangle A_1B_1C_1$.
+            </div>
+
+            <h2>Применение в решении задач</h2>
+            <p>Подобие треугольников — один из самых мощных инструментов в геометрии. Оно позволяет находить неизвестные длины, высоты, расстояния и доказывать различные теоремы.</p>
+
+            <div class="example">
+                <h3>Пример 1: Нахождение высоты предмета</h3>
+                <p><strong>Задача:</strong> Дерево отбрасывает тень длиной 15 м. В то же время человек ростом 1.8 м отбрасывает тень длиной 2.7 м. Найдите высоту дерева.</p>
+                <p><strong>Решение:</strong></p>
+                <p>Солнечные лучи падают параллельно, поэтому они образуют одинаковые углы с поверхностью земли. Дерево и человек стоят перпендикулярно земле (под углом 90°).</p>
+                <p>Получаем два прямоугольных треугольника: один образован деревом (катет $H$) и его тенью (катет 15 м), другой — человеком (катет 1.8 м) и его тенью (катет 2.7 м). У этих треугольников два угла равны (прямой угол и угол падения солнечных лучей). Значит, они подобны по первому признаку.</p>
+                <p>Составим пропорцию:</p>
+                <div class="formula">
+                    $\frac{\text{Высота дерева}}{\text{Рост человека}} = \frac{\text{Тень дерева}}{\text{Тень человека}}$<br>
+                    $\frac{H}{1.8} = \frac{15}{2.7}$
+                </div>
+                <p>Выразим $H$:</p>
+                <p>$H = \frac{15 \times 1.8}{2.7} = \frac{27}{2.7} = 10$ м.</p>
+                <p><strong>Ответ:</strong> Высота дерева — 10 метров.</p>
+            </div>
+
+            <h3>Отношение площадей подобных треугольников</h3>
+            <p>Очень важное свойство, которое часто используется в задачах:</p>
+            <p><strong>Отношение площадей двух подобных треугольников равно квадрату коэффициента подобия.</strong></p>
+            <div class="formula">
+                Если $\triangle ABC \sim \triangle A_1B_1C_1$ с коэффициентом $k$, то:<br>
+                $\frac{S_{ABC}}{S_{A_1B_1C_1}} = k^2$
+            </div>
+            <p>Например, если стороны одного треугольника в 3 раза больше сторон другого, то его площадь будет в $3^2 = 9$ раз больше.</p>
+        </div>
+        
+        <div class="support-banner">
+            <h3>Нужна помощь?</h3>
+            <p>Если у вас есть вопросы или предложения, обращайтесь в службу поддержки:</p>
+            <p><a href="mailto:support@ilafrommath.tech">support@ilafrommath.tech</a></p>
+        </div>
+
+        <footer>
+            <p>&copy; 2025 Математика для школьников. Образовательный ресурс.</p>
+        </footer>
+    </div>
+    <script>
+        // --- JAVASCRIPT ДЛЯ МЕНЮ (добавлен) ---
+        function toggleMenu() {
+            const menu = document.getElementById('sidebarMenu');
+            const overlay = document.querySelector('.menu-overlay');
+            menu.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        // --- JAVASCRIPT ДЛЯ ТЕМЫ (уже был) ---
+        function toggleTheme() {
+            const body = document.body;
+            const themeToggle = document.getElementById('themeToggle');
+            body.classList.toggle('light-theme');
+            
+            if (body.classList.contains('light-theme')) {
+                themeToggle.textContent = '☀️';
+                localStorage.setItem('theme', 'light');
+            } else {
+                themeToggle.textContent = '🌙';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Загружаем сохраненную тему при загрузке страницы
+        window.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme');
+            const themeToggle = document.getElementById('themeToggle');
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-theme');
+                themeToggle.textContent = '☀️';
+            } else {
+                themeToggle.textContent = '🌙';
+            }
+        });
+    </script>
+</body>
+</html>

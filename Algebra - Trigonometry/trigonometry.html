@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Алгебра: Тригонометрия</title>
+    
+    <script>
+        window.MathJax = {
+          tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']]
+          },
+          svg: {
+            fontCache: 'global'
+          }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #000000;
+            color: #ffffff;
+            line-height: 1.6;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(74, 158, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(74, 158, 255, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(74, 158, 255, 0.06) 0%, transparent 50%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(74, 158, 255, 0.03) 2px, rgba(74, 158, 255, 0.03) 4px),
+                repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(74, 158, 255, 0.03) 2px, rgba(74, 158, 255, 0.03) 4px);
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
+        body.light-theme::before {
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(74, 158, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(74, 158, 255, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(74, 158, 255, 0.10) 0%, transparent 50%);
+        }
+
+        body.light-theme::after {
+            background-image: 
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(74, 158, 255, 0.05) 2px, rgba(74, 158, 255, 0.05) 4px),
+                repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(74, 158, 255, 0.05) 2px, rgba(74, 158, 255, 0.05) 4px);
+            opacity: 0.5;
+        }
+
+        /* Animated background particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #4a9eff;
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: float 15s infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); }
+            25% { transform: translateY(-50px) translateX(50px); }
+            50% { transform: translateY(-100px) translateX(-30px); }
+            75% { transform: translateY(-70px) translateX(30px); }
+        }
+
+        /* --- СТИЛИ МЕНЮ --- */
+        .menu-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            z-index: 1001;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            padding: 8px;
+            background-color: #000000;
+            border-radius: 5px;
+        }
+
+        .menu-toggle span {
+            display: block;
+            height: 3px;
+            width: 100%;
+            background-color: #ffffff;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .menu-toggle:hover {
+            background-color: #1a1a1a;
+        }
+
+        .sidebar-menu {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 300px;
+            height: 100vh;
+            background-color: #111111;
+            border-right: 2px solid #333;
+            transition: left 0.3s ease;
+            z-index: 1000;
+            padding: 80px 20px 20px 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-menu.active {
+            left: 0;
+        }
+
+        .menu-item {
+            display: block;
+            padding: 15px 20px;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 1.1em;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            background-color: #1a1a1a;
+            transition: all 0.3s ease;
+        }
+
+        .menu-item:hover {
+            background-color: #2a2a2a;
+            transform: translateX(5px);
+        }
+
+        .menu-credit {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            text-align: center;
+            color: #888;
+            font-size: 0.85em;
+            padding-top: 20px;
+            border-top: 1px solid #333;
+        }
+
+        body.light-theme .menu-credit {
+            color: #666;
+            border-top-color: #ddd;
+        }
+
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+
+        .menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #000000;
+            border: none;
+            cursor: pointer;
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: all 0.3s ease;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        .theme-toggle:hover {
+            background-color: #1a1a1a;
+            transform: scale(1.1);
+        }
+
+        body.light-theme {
+            background-color: #ffffff;
+            color: #000000;
+        }
+
+        body.light-theme .menu-toggle {
+            background-color: #ffffff;
+            border: 2px solid #000000;
+        }
+
+        body.light-theme .menu-toggle span {
+            background-color: #000000;
+        }
+
+        body.light-theme .sidebar-menu {
+            background-color: #f5f5f5;
+            border-right-color: #ddd;
+        }
+
+        body.light-theme .menu-item {
+            background-color: #ffffff;
+            color: #000000;
+            border: 1px solid #ddd;
+        }
+
+        body.light-theme .menu-item:hover {
+            background-color: #e5e5e5;
+        }
+
+        body.light-theme .theme-toggle {
+            background-color: #ffffff;
+            border: none;
+        }
+
+        body.light-theme .theme-toggle:hover {
+            background-color: #f5f5f5;
+        }
+        /* --- КОНЕЦ СТИЛЕЙ МЕНЮ --- */
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            /* margin-top: 80px; УДАЛЕНО */
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 40px;
+            border-top: 2px solid #333;
+            color: #888;
+        }
+        
+        body.light-theme footer {
+            border-top-color: #ddd;
+            color: #666666;
+        }
+
+        /* Стили для статьи */
+        .article-body {
+            background-color: #111111;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 30px 40px;
+            margin-top: 80px; /* Добавлен отступ от кнопок меню */
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .article-body h1 {
+            font-size: 2.5em;
+            color: #ffffff;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .article-body h2 {
+            font-size: 2em;
+            color: #ffffff;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #333;
+        }
+        .article-body h3 {
+            font-size: 1.5em;
+            color: #4a9eff;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+        .article-body p, .article-body li {
+            color: #cccccc;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+        .article-body ul, .article-body ol {
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+        .formula {
+            background-color: #1a1a1a;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            margin: 20px 0;
+            font-size: 1.2em;
+            color: #f0f0f0;
+            text-align: center;
+            overflow-x: auto;
+        }
+        .article-body img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 20px auto;
+            border-radius: 8px;
+            background-color: #f0f0f0;
+        }
+
+        /* Стили для статьи (светлая тема) */
+        body.light-theme .article-body {
+            background-color: #f5f5f5;
+            border-color: #ddd;
+        }
+        body.light-theme .article-body h1 {
+            color: #000000;
+        }
+        body.light-theme .article-body h2 {
+            color: #000000;
+            border-bottom-color: #ddd;
+        }
+        body.light-theme .article-body h3 {
+            color: #0066cc;
+        }
+        body.light-theme .article-body p, body.light-theme .article-body li {
+            color: #333333;
+        }
+        body.light-theme .formula {
+            background-color: #ffffff;
+            border-color: #ddd;
+            color: #000000;
+        }
+        body.light-theme .article-body img {
+            background-color: #e0e0e0;
+        }
+    </style>
+</head>
+<body>
+    <div class="menu-toggle" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+    <div class="theme-toggle" onclick="toggleTheme()" id="themeToggle">🌙</div>
+    
+    <div class="menu-overlay" onclick="toggleMenu()"></div>
+    <div class="sidebar-menu" id="sidebarMenu">
+        <a href="../main.html" class="menu-item">На главную</a>
+        <div class="menu-credit">
+            &copy; 2025 Математика для школьников
+        </div>
+    </div>
+    <div class="particles" id="particles"></div>
+    
+    <div class="container">
+        <div class="article-body">
+            <h1>Алгебра: Тригонометрия</h1>
+
+            <p><b>Тригонометрия</b> — это раздел математики, изучающий соотношения между сторонами и углами треугольников. В основе современной тригонометрии лежит понятие <b>тригонометрической окружности</b> — единичной окружности ($R=1$) с центром в начале координат.</p>
+
+            <h2>Основные тригонометрические функции</h2>
+            <p>Функции определяются через координаты $(x, y)$ точки $P$, полученной поворотом точки $(1, 0)$ на угол $\alpha$ вокруг начала координат.</p>
+            
+            
+
+            <ul>
+                <li><b>Синус ($\sin$)</b>: Ордината (координата $y$) точки $P$. $ \sin(\alpha) = y $</li>
+                <li><b>Косинус ($\cos$)</b>: Абсцисса (координата $x$) точки $P$. $ \cos(\alpha) = x $</li>
+                <li><b>Тангенс ($\tan$)</b>: Отношение синуса к косинусу. $ \tan(\alpha) = \frac{\sin(\alpha)}{\cos(\alpha)} = \frac{y}{x} $</li>
+                <li><b>Котангенс ($\cot$)</b>: Отношение косинуса к синусу. $ \cot(\alpha) = \frac{\cos(\alpha)}{\sin(\alpha)} = \frac{x}{y} $</li>
+            </ul>
+
+            <p>Из определения и теоремы Пифагора ($x^2 + y^2 = 1$) вытекает <b>основное тригонометрическое тождество</b>:</p>
+            <div class="formula">
+                $$ \sin^2(\alpha) + \cos^2(\alpha) = 1 $$
+            </div>
+
+            <h2>Свойства и графики функций</h2>
+
+            <h3>1. Синус ($y = \sin(x)$)</h3>
+            
+            <ul>
+                <li><b>Область определения ($D(f)$):</b> $x \in \mathbb{R}$ (любое действительное число).</li>
+                <li><b>Область значений ($E(f)$):</b> $y \in [-1, 1]$.</li>
+                <li><b>Периодичность:</b> Функция периодическая с главным периодом $T = 2\pi$. $ \sin(x + 2\pi) = \sin(x) $</li>
+                <li><b>Четность:</b> Функция нечетная. $ \sin(-x) = -\sin(x) $ (график симметричен относительно начала координат).</li>
+            </ul>
+
+            <h3>2. Косинус ($y = \cos(x)$)</h3>
+            
+
+[Image of cosine wave graph from -2pi to 2pi]
+
+            <ul>
+                <li><b>Область определения ($D(f)$):</b> $x \in \mathbb{R}$.</li>
+                <li><b>Область значений ($E(f)$):</b> $y \in [-1, 1]$.</li>
+                <li><b>Периодичность:</b> Функция периодическая с главным периодом $T = 2\pi$. $ \cos(x + 2\pi) = \cos(x) $</li>
+                <li><b>Четность:</b> Функция четная. $ \cos(-x) = \cos(x) $ (график симметричен относительно оси $Oy$).</li>
+            </ul>
+
+            <h3>3. Тангенс ($y = \tan(x)$)</h3>
+            
+            <ul>
+                <li><b>Область определения ($D(f)$):</b> $x \neq \frac{\pi}{2} + \pi n$, где $n \in \mathbb{Z}$. (В этих точках $ \cos(x) = 0 $).</li>
+                <li><b>Область значений ($E(f)$):</b> $y \in \mathbb{R}$ (от $-\infty$ до $+\infty$).</li>
+                <li><b>Периодичность:</b> Функция периодическая с главным периодом $T = \pi$. $ \tan(x + \pi) = \tan(x) $</li>
+                <li><b>Четность:</b> Функция нечетная. $ \tan(-x) = -\tan(x) $.</li>
+                <li><b>Асимптоты:</b> Вертикальные прямые $x = \frac{\pi}{2} + \pi n$.</li>
+            </ul>
+
+            <h2>Формулы приведения</h2>
+            <p><b>Формулы приведения</b> используются для того, чтобы свести тригонометрическую функцию любого угла к функции острого угла (от 0 до $90^\circ$ или от 0 до $\pi/2$).</p>
+            <p>При использовании этих формул применяется <b>мнемоническое правило</b>:</p>
+            <ol>
+                <li><b>Знак:</b> Знак итоговой функции определяется по знаку *исходной* функции в той четверти, в которой находится угол (если считать базовый угол $x$ острым).</li>
+                <li><b>Смена функции:</b>
+                    <ul>
+                        <li>Если угол имеет вид $ \pi \pm x $ или $ 2\pi \pm x $, функция <b>не меняется</b> (синус остается синусом, косинус косинусом и т.д.).</li>
+                        <li>Если угол имеет вид $ \frac{\pi}{2} \pm x $ или $ \frac{3\pi}{2} \pm x $, функция <b>меняется на "ко-функцию"</b> (синус на косинус, косинус на синус, тангенс на котангенс и наоборот).</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h3>Примеры:</h3>
+            <ul>
+                <li>$ \sin(\pi - x) = \sin(x) $ (II четверть, $\sin$ положительный, функция не меняется)</li>
+                <li>$ \cos(\frac{\pi}{2} + x) = -\sin(x) $ (II четверть, $\cos$ отрицательный, функция меняется)</li>
+                <li>$ \tan(\pi + x) = \tan(x) $ (III четверть, $\tan$ положительный, функция не меняется)</li>
+                <li>$ \sin(\frac{3\pi}{2} - x) = -\cos(x) $ (III четверть, $\sin$ отрицательный, функция меняется)</li>
+            </ul>
+
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Математика для школьников. Образовательный ресурс.</p>
+    </footer>
+
+    <script>
+        /* ДОБАВЛЕНА ФУНКЦИЯ */
+        function toggleMenu() {
+            const menu = document.getElementById('sidebarMenu');
+            const overlay = document.querySelector('.menu-overlay');
+            menu.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            const themeToggle = document.getElementById('themeToggle');
+            body.classList.toggle('light-theme');
+            
+            if (body.classList.contains('light-theme')) {
+                themeToggle.textContent = '☀️';
+                localStorage.setItem('theme', 'light');
+            } else {
+                themeToggle.textContent = '🌙';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Generate random particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            if (!particlesContainer) return;
+            const particleCount = 30;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Загружаем сохраненную тему при загрузке страницы
+        window.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+
+            const savedTheme = localStorage.getItem('theme');
+            const themeToggle = document.getElementById('themeToggle');
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-theme');
+                themeToggle.textContent = '☀️';
+            } else {
+                themeToggle.textContent = '🌙';
+            }
+        });
+    </script>
+</body>
+</html>

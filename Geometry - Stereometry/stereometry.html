@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Геометрия: Стереометрия</title>
+    
+    <script>
+        window.MathJax = {
+          tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']]
+          },
+          svg: {
+            fontCache: 'global'
+          }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #000000;
+            color: #ffffff;
+            line-height: 1.6;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(74, 158, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(74, 158, 255, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(74, 158, 255, 0.06) 0%, transparent 50%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(74, 158, 255, 0.03) 2px, rgba(74, 158, 255, 0.03) 4px),
+                repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(74, 158, 255, 0.03) 2px, rgba(74, 158, 255, 0.03) 4px);
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
+        body.light-theme::before {
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(74, 158, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(74, 158, 255, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(74, 158, 255, 0.10) 0%, transparent 50%);
+        }
+
+        body.light-theme::after {
+            background-image: 
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(74, 158, 255, 0.05) 2px, rgba(74, 158, 255, 0.05) 4px),
+                repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(74, 158, 255, 0.05) 2px, rgba(74, 158, 255, 0.05) 4px);
+            opacity: 0.5;
+        }
+
+        /* Animated background particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #4a9eff;
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: float 15s infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); }
+            25% { transform: translateY(-50px) translateX(50px); }
+            50% { transform: translateY(-100px) translateX(-30px); }
+            75% { transform: translateY(-70px) translateX(30px); }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(74, 158, 255, 0.2);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #ffffff;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            font-size: 1rem;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #4a9eff;
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        body.light-theme nav {
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        body.light-theme .logo {
+            color: #000000;
+        }
+
+        body.light-theme .nav-links a {
+            color: #000000;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            margin-top: 80px; /* Добавлен отступ от навигации */
+        }
+
+        .theme-toggle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(74, 158, 255, 0.3);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: all 0.3s ease;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        .theme-toggle:hover {
+            background-color: rgba(74, 158, 255, 0.2);
+            transform: scale(1.1);
+            border-color: #4a9eff;
+        }
+
+        body.light-theme {
+            background-color: #ffffff;
+            color: #000000;
+        }
+
+        body.light-theme .theme-toggle {
+            background-color: rgba(255, 255, 255, 0.3);
+            border-color: rgba(74, 158, 255, 0.3);
+        }
+
+        body.light-theme .theme-toggle:hover {
+            background-color: rgba(74, 158, 255, 0.15);
+            border-color: #4a9eff;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 40px;
+            border-top: 2px solid #333;
+            color: #888;
+        }
+        
+        body.light-theme footer {
+            border-top-color: #ddd;
+            color: #666666;
+        }
+
+        /* Стили для статьи */
+        .article-body {
+            background-color: #111111;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 30px 40px;
+            margin-top: 40px;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .article-body h1 {
+            font-size: 2.5em;
+            color: #ffffff;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .article-body h2 {
+            font-size: 2em;
+            color: #ffffff;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #333;
+        }
+        .article-body h3 {
+            font-size: 1.5em;
+            color: #4a9eff;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+        .article-body p, .article-body li {
+            color: #cccccc;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+        .article-body ul, .article-body ol {
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+        .formula-inline {
+            background-color: #1a1a1a;
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: 1px solid #333;
+            color: #f0f0f0;
+            font-size: 1.1em;
+        }
+        .formula-block {
+            background-color: #1a1a1a;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            margin: 20px 0;
+            font-size: 1.2em;
+            color: #f0f0f0;
+            text-align: center;
+            overflow-x: auto;
+        }
+        .note {
+            background-color: #1a1a1a;
+            border-left: 5px solid #4a9eff;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            color: #bbbbbb;
+        }
+        
+        /* Стили для статьи (светлая тема) */
+        body.light-theme .article-body {
+            background-color: #f5f5f5;
+            border-color: #ddd;
+        }
+        body.light-theme .article-body h1 {
+            color: #000000;
+        }
+        body.light-theme .article-body h2 {
+            color: #000000;
+            border-bottom-color: #ddd;
+        }
+        body.light-theme .article-body h3 {
+            color: #0066cc;
+        }
+        body.light-theme .article-body p, body.light-theme .article-body li {
+            color: #333333;
+        }
+        body.light-theme .formula-inline {
+            background-color: #ffffff;
+            border-color: #ddd;
+            color: #000000;
+        }
+        body.light-theme .formula-block {
+            background-color: #ffffff;
+            border-color: #ddd;
+            color: #000000;
+        }
+        body.light-theme .note {
+            background-color: #eef5ff;
+            border-left-color: #0066cc;
+            color: #222222;
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    
+    <nav>
+        <div class="nav-container">
+            <a href="../main.html" class="logo">📐 ILAMath</a>
+            <div class="nav-links">
+                <a href="../main.html#grades-7-9">7-9 классы</a>
+                <a href="../main.html#grades-10-11">10-11 классы</a>
+                <a href="../main.html#support">Поддержка</a>
+            </div>
+            <div class="theme-toggle" onclick="toggleTheme()" id="themeToggle">🌙</div>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <div class="article-body">
+            <h1>Геометрия: Стереометрия</h1>
+
+            <p><b>Стереометрия</b> — это раздел геометрии, который изучает фигуры в пространстве. Основными объектами изучения являются многогранники (такие как куб, призма, пирамида) и тела вращения (цилиндр, конус, шар).</p>
+            <p>В стереометрии мы оперируем двумя основными характеристиками: <b>площадью поверхности</b> и <b>объемом</b>.</p>
+
+            <h2>Многогранники</h2>
+            <p><b>Многогранник</b> — это геометрическое тело, ограниченное плоскими многоугольниками (гранями).</p>
+
+            <h3>Призма</h3>
+            <p><b>Призма</b> — многогранник, у которого две грани (основания) — равные многоугольники, лежащие в параллельных плоскостях, а остальные грани (боковые) — параллелограммы.</p>
+            
+            <ul>
+                <li><b>Объем ($V$):</b> Произведение площади основания на высоту.
+                    <div class="formula-block">$$ V = S_{осн} \cdot H $$</div>
+                </li>
+                <li><b>Площадь боковой поверхности ($S_{бок}$):</b> Сумма площадей боковых граней. Для <b>прямой</b> призмы: $ S_{бок} = P \cdot H $, где $P$ — периметр основания.</li>
+                <li><b>Площадь полной поверхности ($S_{полн}$):</b> $ S_{полн} = S_{бок} + 2 \cdot S_{осн} $</li>
+            </ul>
+            <p><b>Куб</b> — это частный случай прямой призмы (и прямоугольного параллелепипеда), у которого все ребра равны ($a$).</p>
+            <ul>
+                <li>Объем: $ V = a^3 $</li>
+                <li>Площадь поверхности: $ S_{полн} = 6a^2 $</li>
+            </ul>
+
+            <h3>Пирамида</h3>
+            <p><b>Пирамида</b> — многогранник, у которого одна грань (основание) — многоугольник, а остальные грани (боковые) — треугольники с общей вершиной.</p>
+            
+
+[Image of a square pyramid]
+
+            <ul>
+                <li><b>Объем ($V$):</b>
+                    <div class="formula-block">$$ V = \frac{1}{3} S_{осн} \cdot H $$</div>
+                </li>
+                <li><b>Площадь боковой поверхности ($S_{бок}$):</b> Сумма площадей боковых граней.</li>
+                <li><b>Площадь полной поверхности ($S_{полн}$):</b> $ S_{полн} = S_{бок} + S_{осн} $</li>
+            </ul>
+
+            <h2>Тела вращения</h2>
+            <p><b>Тело вращения</b> образуется вращением плоской фигуры вокруг некоторой оси.</p>
+
+            <h3>Цилиндр</h3>
+            <p><b>Цилиндр</b> образуется вращением прямоугольника вокруг одной из его сторон.</p>
+            
+            <ul>
+                <li><b>Объем ($V$):</b> $ R $ — радиус основания, $H$ — высота.
+                    <div class="formula-block">$$ V = \pi R^2 H $$</div>
+                </li>
+                <li><b>Площадь боковой поверхности ($S_{бок}$):</b>
+                    <div class="formula-block">$$ S_{бок} = 2 \pi R H $$</div>
+                </li>
+                <li><b>Площадь полной поверхности ($S_{полн}$):</b>
+                    <div class="formula-block">$$ S_{полн} = 2 \pi R H + 2 \pi R^2 = 2 \pi R (H + R) $$</div>
+                </li>
+            </ul>
+
+            <h3>Конус</h3>
+            <p><b>Конус</b> образуется вращением прямоугольного треугольника вокруг одного из его катетов.</p>
+            
+            <ul>
+                <li><b>Объем ($V$):</b> $ R $ — радиус основания, $H$ — высота.
+                    <div class="formula-block">$$ V = \frac{1}{3} \pi R^2 H $$</div>
+                </li>
+                <li><b>Площадь боковой поверхности ($S_{бок}$):</b> $ L $ — образующая ($L = \sqrt{R^2 + H^2}$).
+                    <div class="formula-block">$$ S_{бок} = \pi R L $$</div>
+                </li>
+<li><b>Площадь полной поверхности ($S_{полн}$):</b>
+                    <div class="formula-block">$$ S_{полн} = S_{бок} + S_{осн} = \pi R L + \pi R^2 = \pi R (L + R) $$</div>
+                </li>
+            </ul>
+
+            <h3>Шар и Сфера</h3>
+            <p><b>Сфера</b> — это поверхность, все точки которой равноудалены от центра. <b>Шар</b> — это тело, ограниченное сферой.</p>
+            
+            <ul>
+                <li><b>Объем Шара ($V$):</b>
+                    <div class="formula-block">$$ V = \frac{4}{3} \pi R^3 $$</div>
+                </li>
+                <li><b>Площадь поверхности Сферы ($S$):</b>
+                    <div class="formula-block">$$ S = 4 \pi R^2 $$</div>
+                </li>
+            </ul>
+
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Математика для школьников. Образовательный ресурс.</p>
+    </footer>
+
+    <script>
+        function toggleTheme() {
+            const body = document.body;
+            const themeToggle = document.getElementById('themeToggle');
+            body.classList.toggle('light-theme');
+            
+            if (body.classList.contains('light-theme')) {
+                themeToggle.textContent = '☀️';
+                localStorage.setItem('theme', 'light');
+            } else {
+                themeToggle.textContent = '🌙';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Generate random particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            if (!particlesContainer) return;
+            const particleCount = 30;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Загружаем сохраненную тему при загрузке страницы
+        window.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+
+            const savedTheme = localStorage.getItem('theme');
+            const themeToggle = document.getElementById('themeToggle');
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-theme');
+                themeToggle.textContent = '☀️';
+            } else {
+                themeToggle.textContent = '🌙';
+            }
+        });
+    </script>
+</body>
+</html>

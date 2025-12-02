@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Алгебра: Функции и графики</title>
+    
+    <script>
+        MathJax = {
+          tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']]
+          }
+        };
+    </script>
+    <script id="MathJax-script" async
+            src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #000000;
+            color: #ffffff;
+            line-height: 1.6;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(74, 158, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(74, 158, 255, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(74, 158, 255, 0.06) 0%, transparent 50%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(74, 158, 255, 0.03) 2px, rgba(74, 158, 255, 0.03) 4px),
+                repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(74, 158, 255, 0.03) 2px, rgba(74, 158, 255, 0.03) 4px);
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
+        body.light-theme {
+            background-color: #ffffff;
+            color: #000000;
+        }
+
+        body.light-theme::before {
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(74, 158, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(74, 158, 255, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(74, 158, 255, 0.10) 0%, transparent 50%);
+        }
+
+        body.light-theme::after {
+            background-image: 
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(74, 158, 255, 0.05) 2px, rgba(74, 158, 255, 0.05) 4px),
+                repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(74, 158, 255, 0.05) 2px, rgba(74, 158, 255, 0.05) 4px);
+            opacity: 0.5;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            border-bottom: 2px solid #333;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #ffffff;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.1);
+        }
+
+        body.light-theme header {
+            border-bottom-color: #ddd;
+        }
+
+        body.light-theme h1 {
+            color: #000000;
+        }
+
+        /* --- СТИЛИ МЕНЮ --- */
+        .menu-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            z-index: 1001;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            padding: 8px;
+            background-color: #000000;
+            border-radius: 5px;
+        }
+
+        .menu-toggle span {
+            display: block;
+            height: 3px;
+            width: 100%;
+            background-color: #ffffff;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .menu-toggle:hover {
+            background-color: #1a1a1a;
+        }
+
+        .sidebar-menu {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 300px;
+            height: 100vh;
+            background-color: #111111;
+            border-right: 2px solid #333;
+            transition: left 0.3s ease;
+            z-index: 1000;
+            padding: 80px 20px 20px 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-menu.active {
+            left: 0;
+        }
+
+        .menu-item {
+            display: block;
+            padding: 15px 20px;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 1.1em;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            background-color: #1a1a1a;
+            transition: all 0.3s ease;
+        }
+
+        .menu-item:hover {
+            background-color: #2a2a2a;
+            transform: translateX(5px);
+        }
+
+        .menu-credit {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            text-align: center;
+            color: #888;
+            font-size: 0.85em;
+            padding-top: 20px;
+            border-top: 1px solid #333;
+        }
+
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+
+        .menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        /* --- КОНЕЦ СТИЛЕЙ МЕНЮ --- */
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #000000;
+            border: none;
+            cursor: pointer;
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: all 0.3s ease;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        .theme-toggle:hover {
+            background-color: #1a1a1a;
+            transform: scale(1.1);
+        }
+
+        /* --- СТИЛИ СВЕТЛОЙ ТЕМЫ --- */
+        body.light-theme .menu-toggle {
+            background-color: #ffffff;
+            border: 2px solid #000000;
+        }
+
+        body.light-theme .menu-toggle span {
+            background-color: #000000;
+        }
+
+        body.light-theme .sidebar-menu {
+            background-color: #f5f5f5;
+            border-right-color: #ddd;
+        }
+
+        body.light-theme .menu-item {
+            background-color: #ffffff;
+            color: #000000;
+            border: 1px solid #ddd;
+        }
+
+        body.light-theme .menu-item:hover {
+            background-color: #e5e5e5;
+        }
+        
+        body.light-theme .menu-credit {
+            color: #666;
+            border-top-color: #ddd;
+        }
+
+        body.light-theme .theme-toggle {
+            background-color: #ffffff;
+            border: 2px solid #000000;
+        }
+
+        body.light-theme .theme-toggle:hover {
+            background-color: #f5f5f5;
+        }
+        /* --- КОНЕЦ СТИЛЕЙ СВЕТЛОЙ ТЕМЫ --- */
+
+        .article-content {
+            background-color: #111111;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 30px;
+        }
+
+        body.light-theme .article-content {
+            background-color: #f9f9f9;
+            border-color: #ddd;
+        }
+
+        .article-content h2 {
+            font-size: 2em;
+            color: #4a9eff;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #333;
+        }
+
+        body.light-theme .article-content h2 {
+            color: #0056b3;
+            border-bottom-color: #ddd;
+        }
+
+        .article-content h3 {
+            font-size: 1.5em;
+            color: #ffffff;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+
+        body.light-theme .article-content h3 {
+            color: #000000;
+        }
+
+        .article-content p, .article-content li {
+            font-size: 1.1em;
+            margin-bottom: 15px;
+        }
+
+        .article-content ul {
+            padding-left: 30px;
+        }
+
+        .formula {
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.1em;
+            overflow-x: auto;
+            color: #cddc39;
+        }
+
+        body.light-theme .formula {
+            background-color: #eeeeee;
+            border-color: #ddd;
+            color: #333;
+        }
+
+        .example {
+            background-color: #1a1a1a;
+            border-left: 4px solid #4a9eff;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+        }
+
+        body.light-theme .example {
+            background-color: #f5f5f5;
+            border-color: #0056b3;
+        }
+
+        .example p {
+            margin-bottom: 10px;
+        }
+        
+        .example-steps {
+            padding-left: 20px;
+        }
+        
+        .example-steps li {
+            margin-bottom: 10px;
+        }
+
+        /* --- ДОБАВЛЕННЫЕ СТИЛИ БАННЕРА --- */
+        .support-banner {
+            background: linear-gradient(135deg, rgba(74, 158, 255, 0.1) 0%, rgba(74, 158, 255, 0.05) 100%);
+            border-top: 2px solid rgba(74, 158, 255, 0.3);
+            border-bottom: 2px solid rgba(74, 158, 255, 0.3);
+            padding: 25px 20px;
+            margin-top: 40px;
+            text-align: center;
+            color: #ccc;
+        }
+
+        .support-banner h3 {
+            margin: 0 0 10px 0;
+            color: #4a9eff;
+            font-size: 1.2em;
+        }
+
+        .support-banner p {
+            margin: 5px 0;
+            color: #aaa;
+        }
+
+        .support-banner a {
+            color: #4a9eff;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        .support-banner a:hover {
+            color: #6bb0ff;
+            text-decoration: underline;
+        }
+
+        body.light-theme .support-banner {
+            background: linear-gradient(135deg, rgba(74, 158, 255, 0.15) 0%, rgba(74, 158, 255, 0.08) 100%);
+            border-top-color: rgba(74, 158, 255, 0.4);
+            border-bottom-color: rgba(74, 158, 255, 0.4);
+            color: #333;
+        }
+
+        body.light-theme .support-banner h3 {
+            color: #0066cc;
+        }
+
+        body.light-theme .support-banner p {
+            color: #555;
+        }
+
+        body.light-theme .support-banner a {
+            color: #0066cc;
+        }
+
+        body.light-theme .support-banner a:hover {
+            color: #0080ff;
+        }
+        /* --- КОНЕЦ СТИЛЕЙ БАННЕРА --- */
+
+        footer {
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 0; /* Изменено с 40px на 0 */
+            border-top: 2px solid #333;
+            color: #888;
+        }
+
+        body.light-theme footer {
+            border-top-color: #ddd;
+            color: #666666;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="menu-toggle" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div class="theme-toggle" onclick="toggleTheme()" id="themeToggle">🌙</div>
+        <div class="menu-overlay" onclick="toggleMenu()"></div>
+        <div class="sidebar-menu" id="sidebarMenu">
+            <a href="../main.html" class="menu-item">На главную</a>
+            <div class="menu-credit">
+                &copy; 2025 Математика для школьников
+            </div>
+        </div>
+        <header>
+            <h1>📈 Алгебра: Функции и графики</h1>
+        </header>
+
+        <div class="article-content">
+            <h2>Что такое функция?</h2>
+            <p><strong>Функция</strong> — это правило или закон, по которому каждому значению одной переменной (независимой переменной, или <strong>аргументом</strong>, $x$) ставится в соответствие одно-единственное значение другой переменной (зависимой переменной, $y$).</p>
+            <p>Это можно представить как "черный ящик", в который вы подаете $x$, а он выдает вам $y$. Записывается это как $y = f(x)$.</p>
+            <ul>
+                <li><strong>$x$</strong> — аргумент (то, что мы выбираем сами).</li>
+                <li><strong>$y$</strong> или <strong>$f(x)$</strong> — значение функции (то, что получаем).</li>
+                <li><strong>Область определения ($D(f)$)</strong> — все допустимые значения $x$.</li>
+                <li><strong>Область значений ($E(f)$)</strong> — все значения, которые может принимать $y$.</li>
+            </ul>
+            <p><strong>График функции</strong> — это множество всех точек на координатной плоскости, у которых абсциссы ($x$) — это допустимые значения аргумента, а ординаты ($y$) — соответствующие им значения функции.</p>
+
+            <h2>Линейная функция: $y = kx + b$</h2>
+            <p><strong>Линейная функция</strong> — это функция вида $y = kx + b$, где $k$ и $b$ — некоторые числа.</p>
+            <p>Графиком линейной функции всегда является <strong>прямая линия</strong>.</p>
+            
+            <h3>Коэффициенты $k$ и $b$</h3>
+            <ul>
+                <li><strong>$k$ — угловой коэффициент.</strong> Он отвечает за наклон прямой:
+                    <ul>
+                        <li>Если $k > 0$, функция возрастает (прямая идет "в горку").</li>
+                        <li>Если $k < 0$, функция убывает (прямая идет "под горку").</li>
+                        <li>Если $k = 0$, функция имеет вид $y = b$ — это горизонтальная прямая.</li>
+                    </ul>
+                </li>
+                <li><strong>$b$ — свободный член.</strong> Это точка, в которой график пересекает ось $OY$. Координаты этой точки $(0; b)$.</li>
+            </ul>
+
+            <div class="example">
+                <h3>Как построить график линейной функции</h3>
+                <p><strong>Задача:</strong> Построить график функции $y = 2x - 1$.</p>
+                <p><strong>Решение:</strong></p>
+                <p>Так как график — прямая, для его построения достаточно найти всего две точки. Возьмем два произвольных значения $x$ и найдем для них $y$.</p>
+                <ol class="example-steps">
+                    <li>
+                        Возьмем $x_1 = 0$.<br>
+                        $y_1 = 2 \cdot 0 - 1 = -1$.<br>
+                        Получили точку <strong>A (0; -1)</strong>. (Кстати, это и есть точка пересечения с осью $OY$, так как $b = -1$).
+                    </li>
+                    <li>
+                        Возьмем $x_2 = 2$.<br>
+                        $y_2 = 2 \cdot 2 - 1 = 4 - 1 = 3$.<br>
+                        Получили точку <strong>B (2; 3)</strong>.
+                    </li>
+                    <li>
+                        Отмечаем точки A и B на координатной плоскости и проводим через них прямую. Это и есть график функции $y = 2x - 1$.
+                    </li>
+                </ol>
+            </div>
+            
+            <h2>Квадратичная функция: $y = ax^2 + bx + c$</h2>
+            <p><strong>Квадратичная функция</strong> — это функция вида $y = ax^2 + bx + c$, где $a, b, c$ — числа, и $a \neq 0$.</p>
+            <p>Графиком квадратичной функции является <strong>парабола</strong>.</p>
+            
+            <h3>Ключевые элементы параболы</h3>
+            <ol>
+                <li><strong>Направление ветвей.</strong> Зависит от коэффициента $a$:
+                    <ul>
+                        <li>Если $a > 0$, ветви параболы направлены <strong>вверх</strong>.</li>
+                        <li>Если $a < 0$, ветви параболы направлены <strong>вниз</strong>.</li>
+                    </ul>
+                </li>
+                <li><strong>Вершина параболы.</strong> Это самая нижняя (при $a > 0$) или самая верхняя (при $a < 0$) точка параболы. Ее координаты $(x_0; y_0)$ находятся по формулам:
+                    <div class="formula">
+                        $x_0 = -\frac{b}{2a}$
+                    </div>
+                    Чтобы найти $y_0$, нужно подставить найденный $x_0$ обратно в функцию: $y_0 = a(x_0)^2 + b(x_0) + c$.
+                </li>
+                <li><strong>Точки пересечения с осями:</strong>
+                    <ul>
+                        <li><strong>С осью $OY$:</strong> Это точка $(0; c)$. Коэффициент $c$ показывает, где парабола пересекает ось $y$.</li>
+                        <li><strong>С осью $OX$:</strong> Это <strong>нули функции</strong>. Чтобы их найти, нужно приравнять функцию к нулю ($ax^2 + bx + c = 0$) и решить квадратное уравнение. У параболы может быть две, одна или ни одной точки пересечения с осью $OX$.</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <div class="example">
+                <h3>Как построить график квадратичной функции</h3>
+                <p><strong>Задача:</strong> Построить график функции $y = x^2 - 4x + 3$.</p>
+                <p><strong>Решение (по шагам):</strong></p>
+                <ol class="example-steps">
+                    <li><strong>$a = 1$</strong>. Так как $a > 0$, ветви параболы направлены <strong>вверх</strong>.</li>
+                    <li>
+                        <strong>Найдем вершину $(x_0; y_0)$:</strong><br>
+                        $x_0 = -\frac{b}{2a} = -\frac{-4}{2 \cdot 1} = \frac{4}{2} = 2$.<br>
+                        $y_0 = (2)^2 - 4(2) + 3 = 4 - 8 + 3 = -1$.<br>
+                        Вершина параболы: <strong>(2; -1)</strong>.
+                    </li>
+                    <li>
+                        <strong>Точка пересечения с $OY$:</strong><br>
+                        $c = 3$. Точка <strong>(0; 3)</strong>.
+                    </li>
+                    <li>
+                        <strong>Точки пересечения с $OX$ (нули функции):</strong><br>
+                        $x^2 - 4x + 3 = 0$.<br>
+                        По теореме Виета (или через дискриминант):<br>
+                        $x_1 = 1$, $x_2 = 3$.<br>
+                        Точки: <strong>(1; 0)</strong> и <strong>(3; 0)</strong>.
+                    </li>
+                    <li>
+                        <strong>Дополнительная точка:</strong> Найдем точку, симметричную точке $(0; 3)$ относительно оси симметрии $x = x_0 = 2$. Эта точка будет $(4; 3)$.
+                    </li>
+                    <li>
+                        Отмечаем все найденные точки (2; -1), (0; 3), (1; 0), (3; 0), (4; 3) и плавно соединяем их, рисуя параболу.
+                    </li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="support-banner">
+            <h3>Нужна помощь?</h3>
+            <p>Если у вас есть вопросы или предложения, обращайтесь в службу поддержки:</p>
+            <p><a href="mailto:support@ilafrommath.tech">support@ilafrommath.tech</a></p>
+        </div>
+
+        <footer>
+            <p>&copy; 2025 Математика для школьников. Образовательный ресурс.</p>
+        </footer>
+    </div>
+    <script>
+        // --- JAVASCRIPT ДЛЯ МЕНЮ ---
+        function toggleMenu() {
+            const menu = document.getElementById('sidebarMenu');
+            const overlay = document.querySelector('.menu-overlay');
+            menu.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        // --- JAVASCRIPT ДЛЯ ТЕМЫ ---
+        function toggleTheme() {
+            const body = document.body;
+            const themeToggle = document.getElementById('themeToggle');
+            body.classList.toggle('light-theme');
+            
+            if (body.classList.contains('light-theme')) {
+                themeToggle.textContent = '☀️';
+                localStorage.setItem('theme', 'light');
+            } else {
+                themeToggle.textContent = '🌙';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Загружаем сохраненную тему при загрузке страницы
+        window.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme');
+            const themeToggle = document.getElementById('themeToggle');
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-theme');
+                themeToggle.textContent = '☀️';
+            } else {
+                themeToggle.textContent = '🌙';
+            }
+        });
+    </script>
+</body>
+</html>

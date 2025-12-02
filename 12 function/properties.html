@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Алгебра: 12 свойств функции — ILAMath</title>
+    
+    <!-- Подключаем современные шрифты -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Outfit:wght@500;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- CSS Variables & Reset --- */
+        :root {
+            /* Dark Theme (Default) */
+            --bg-body: #0f1115;
+            --bg-gradient-1: rgba(74, 158, 255, 0.15);
+            --bg-gradient-2: rgba(124, 77, 255, 0.15);
+            
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-blur: blur(12px);
+            
+            --text-main: #ffffff;
+            --text-muted: #a0a0b0;
+            
+            --primary: #4a9eff;
+            --primary-glow: rgba(74, 158, 255, 0.5);
+            --accent: #7c4dff;
+            
+            /* Яркий цвет для формул */
+            --code-text: #ff4081; 
+            --code-bg: rgba(255, 64, 129, 0.15);
+            
+            --nav-bg: rgba(15, 17, 21, 0.8);
+        }
+
+        body.light-theme {
+            --bg-body: #f0f4f8;
+            --bg-gradient-1: rgba(74, 158, 255, 0.1);
+            --bg-gradient-2: rgba(124, 77, 255, 0.1);
+            
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(0, 0, 0, 0.05);
+            
+            --text-main: #1a1a2e;
+            --text-muted: #555566;
+            
+            --primary: #0066cc;
+            --primary-glow: rgba(0, 102, 204, 0.3);
+            
+            --nav-bg: rgba(255, 255, 255, 0.8);
+            
+            --code-text: #c2185b;
+            --code-bg: rgba(194, 24, 91, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.7;
+            overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* --- Dynamic Backgrounds --- */
+        .bg-blobs {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.6;
+        }
+
+        .blob-1 {
+            top: -10%;
+            left: -10%;
+            width: 50vw;
+            height: 50vw;
+            background: var(--bg-gradient-1);
+            animation: floatBlob 20s infinite alternate;
+        }
+
+        .blob-2 {
+            bottom: -10%;
+            right: -10%;
+            width: 40vw;
+            height: 40vw;
+            background: var(--bg-gradient-2);
+            animation: floatBlob 15s infinite alternate-reverse;
+        }
+
+        @keyframes floatBlob {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(rgba(74, 158, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(74, 158, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* --- Navigation --- */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: var(--nav-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            z-index: 1000;
+            border-bottom: 1px solid var(--glass-border);
+            padding: 1rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+            letter-spacing: -1px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-main);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        /* --- Controls --- */
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .theme-toggle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            background: var(--primary);
+            color: white;
+            transform: rotate(15deg);
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            z-index: 1002;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background-color: var(--text-main);
+            transition: 0.3s;
+        }
+
+        /* --- Hero (Mini for Article) --- */
+        .article-hero {
+            padding: 120px 2rem 60px;
+            text-align: center;
+        }
+
+        .article-hero h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, var(--text-main), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .article-hero p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 700px;
+            margin: 0 auto;
+            animation: fadeInUp 0.8s ease 0.2s backwards;
+        }
+
+        /* --- Article Content Box --- */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 2rem 80px;
+        }
+
+        .article-box {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            animation: fadeInUp 0.8s ease 0.4s backwards;
+        }
+
+        .article-content h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .article-content h2:first-child {
+            margin-top: 0;
+        }
+
+        .article-content p {
+            margin-bottom: 1.2rem;
+            color: var(--text-main);
+            font-size: 1.05rem;
+        }
+
+        .article-content ul {
+            list-style: none;
+            padding-left: 0;
+            margin-bottom: 1.5rem;
+        }
+
+        .article-content li {
+            position: relative;
+            padding-left: 25px;
+            margin-bottom: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .article-content li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .article-content code {
+            font-family: 'Consolas', 'Monaco', monospace;
+            background: var(--code-bg);
+            color: var(--code-text);
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 0.95em;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-weight: 600;
+        }
+
+        /* --- Support & Footer --- */
+        .support-box {
+            background: linear-gradient(135deg, rgba(74, 158, 255, 0.1), rgba(124, 77, 255, 0.1));
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        .support-box h3 {
+            color: var(--primary);
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .support-box a {
+            color: var(--text-main);
+            font-size: 1.2rem;
+            text-decoration: none;
+            font-weight: 700;
+            transition: color 0.3s;
+        }
+        
+        .support-box a:hover {
+            color: var(--primary);
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            border-top: 1px solid var(--glass-border);
+            color: var(--text-muted);
+            margin-top: 40px;
+            background: var(--nav-bg);
+        }
+
+        /* --- Animations --- */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- Mobile Responsive --- */
+        @media (max-width: 768px) {
+            .hamburger { display: flex; }
+            
+            .nav-links {
+                position: fixed;
+                top: 0; right: -100%;
+                width: 75%; height: 100vh;
+                background: var(--bg-body);
+                flex-direction: column;
+                justify-content: center;
+                border-left: 1px solid var(--glass-border);
+                transition: 0.4s ease;
+                backdrop-filter: blur(20px);
+                box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+            }
+            
+            .nav-links.active { right: 0; }
+
+            .article-box { padding: 25px; }
+            .article-hero h1 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Фон с плавающими пятнами -->
+    <div class="bg-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <nav>
+        <div class="nav-container">
+            <!-- ССЫЛКА НА ГЛАВНУЮ СТРАНИЦУ (Main.html) -->
+            <a href="../main.html" class="logo">📐 ILAMath</a>
+            
+            <!-- НАВИГАЦИЯ ПО MAIN.HTML -->
+            <div class="nav-links" id="navLinks">
+                <a href="../main.html">Главная</a>
+                <a href="../main.html#grades-7-9">7-9 классы</a>
+                <a href="../main.html#grades-10-11">10-11 классы</a>
+            </div>
+
+            <div class="controls">
+                <!-- Кнопка темы -->
+                <div class="theme-toggle" onclick="toggleTheme()" id="themeToggle" title="Сменить тему">
+                    🌙
+                </div>
+                
+                <!-- Бургер меню -->
+                <div class="hamburger" onclick="toggleMenu()">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Заголовок статьи -->
+    <section class="article-hero">
+        <h1>Алгебра: 12 свойств функции</h1>
+        <p>Полное руководство по исследованию функций, построению графиков и анализу формул.</p>
+    </section>
+
+    <div class="container">
+        <!-- Основной контент в стеклянной карточке -->
+        <article class="article-box">
+            <div class="article-content">
+                <h2>Введение</h2>
+                <p>Исследование функции — это подробный анализ ее поведения. Знание этих 12 свойств позволяет построить точный график и понять все ключевые особенности функции, заданной формулой <code>y = f(x)</code>.</p>
+
+                <h2>1. Область определения <code>D(f)</code></h2>
+                <p>Это множество всех <strong>допустимых</strong> значений аргумента <code>x</code>, при которых функция <code>f(x)</code> существует (имеет смысл). При поиске <code>D(f)</code> нужно обращать внимание на:</p>
+                <ul>
+                    <li>Знаменатели дробей (не должны быть равны нулю).</li>
+                    <li>Выражения под корнями четной степени (должны быть неотрицательными).</li>
+                    <li>Выражения под логарифмами (должны быть строго положительными).</li>
+                </ul>
+
+                <h2>2. Область значений <code>E(f)</code></h2>
+                <p>Это множество всех значений, которые принимает функция <code>y</code> (или <code>f(x)</code>) на своей области определения <code>D(f)</code>.</p>
+
+                <h2>3. Монотонность (возрастание и убывание)</h2>
+                <p>Функция называется <strong>возрастающей</strong> на промежутке, если большему значению <code>x</code> соответствует большее значение <code>y</code>. И наоборот, <strong>убывающей</strong>, если большему <code>x</code> соответствует меньший <code>y</code>. Эти промежутки находят с помощью производной (в 10-11 классах):</p>
+                <ul>
+                    <li>Если <code>f'(x) > 0</code>, функция возрастает.</li>
+                    <li>Если <code>f'(x) < 0</code>, функция убывает.</li>
+                </ul>
+
+                <h2>4. Нули функции</h2>
+                <p>Это значения <code>x</code>, при которых функция равна нулю: <code>f(x) = 0</code>. На графике это точки пересечения с осью абсцисс (осью Ox).</p>
+
+                <h2>5. Промежутки знакопостоянства</h2>
+                <p>Это промежутки, на которых функция сохраняет свой знак (остается либо положительной, либо отрицательной). Их находят, решая неравенства:</p>
+                <ul>
+                    <li><strong>Положительные значения:</strong> <code>f(x) > 0</code> (график выше оси Ox).</li>
+                    <li><strong>Отрицательные значения:</strong> <code>f(x) < 0</code> (график ниже оси Ox).</li>
+                </ul>
+
+                <h2>6. Ограниченность функции</h2>
+                <p>Функция называется <strong>ограниченной снизу</strong>, если существует такое число <code>m</code>, что <code>f(x) ≥ m</code> для всех <code>x</code>. И <strong>ограниченной сверху</strong>, если <code>f(x) ≤ M</code>. Если она ограничена и сверху, и снизу, ее называют просто <strong>ограниченной</strong>.</p>
+                
+                <h2>7. Точки экстремумов (минимумы и максимумы)</h2>
+                <p>Это точки "вершин" и "впадин" на графике.</p>
+                <ul>
+                    <li><strong>Точка максимума</strong> <code>x_max</code> — это точка, в которой возрастание сменяется убыванием.</li>
+                    <li><strong>Точка минимума</strong> <code>x_min</code> — это точка, в которой убывание сменяется возрастанием.</li>
+                </ul>
+                <p>Значения функции в этих точках (<code>y_max</code> и <code>y_min</code>) называются <strong>экстремумами</strong>.</p>
+                
+                <h2>8. Четность (Парность) функции</h2>
+                <p>Это свойство, связанное с симметрией графика.</p>
+                <ul>
+                    <li><strong>Четная:</strong> <code>f(-x) = f(x)</code>. График симметричен относительно оси ординат (оси Oy). Пример: <code>y = x²</code>.</li>
+                    <li><strong>Нечетная:</strong> <code>f(-x) = -f(x)</code>. График симметричен относительно начала координат (точки 0,0). Пример: <code>y = x³</code>.</li>
+                </ul>
+                <p>Если ни одно из условий не выполняется, функция называется <strong>функцией общего вида</strong> (ни четная, ни нечетная).</p>
+
+                <h2>9. Периодичность</h2>
+                <p>Функция <code>f(x)</code> называется периодической, если существует такое число <code>T ≠ 0</code> (период), что <code>f(x + T) = f(x)</code> для любого <code>x</code>. График такой функции состоит из повторяющихся одинаковых фрагментов. (Например, все тригонометрические функции).</p>
+
+                <h2>10. Непрерывность</h2>
+                <p>Говоря простым языком, функция непрерывна, если ее график можно нарисовать, не отрывая карандаша от бумаги. Точки, в которых это сделать нельзя (происходит "разрыв"), называются <strong>точками разрыва</strong>.</p>
+
+                <h2>11. Выпуклость (и вогнутость)</h2>
+                <p>Это свойство, описывающее "изгиб" графика.</p>
+                <ul>
+                    <li><strong>Выпуклая (выпуклая вверх):</strong> График похож на "холмик" (ветви параболы <code>y = -x²</code>).</li>
+                    <li><strong>Вогнутая (выпуклая вниз):</strong> График похож на "чашу" (ветви параболы <code>y = x²</code>).</li>
+                </ul>
+                
+                <h2>12. Максимальное и Минимальное значение</h2>
+                <p>Это <strong>самые большие и самые маленькие значения</strong> <code>y</code>, которые функция достигает на всей своей области определения <code>D(f)</code> или на заданном отрезке <code>[a, b]</code>.</p>
+                <ul>
+                    <li><strong>Важно не путать</strong> с точками экстремума. Локальный максимум — это "вершина", но может быть другая вершина еще выше.</li>
+                    <li><strong>Наибольшее значение (y_наиб)</strong> — это абсолютный максимум на графике.</li>
+                    <li><strong>Наименьшее значение (y_наим)</strong> — это абсолютный минимум на графике.</li>
+                </ul>
+            </div>
+        </article>
+
+        <!-- Поддержка -->
+        <div class="support-box">
+            <h3>💡 Остались вопросы?</h3>
+            <p>Наша команда преподавателей готова помочь с любой задачей.</p>
+            <br>
+            <a href="mailto:support@ilafrommath.tech">support@ilafrommath.tech</a>
+        </div>
+
+    </div>
+
+    <footer>
+        <p>&copy; 2025 ILAMath. Образовательный проект.</p>
+    </footer>
+
+    <script>
+        // Мобильное меню
+        function toggleMenu() {
+            const navLinks = document.getElementById('navLinks');
+            const spans = document.querySelectorAll('.hamburger span');
+            
+            navLinks.classList.toggle('active');
+            
+            if (navLinks.classList.contains('active')) {
+                spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+                spans[1].style.opacity = '0';
+                spans[2].style.transform = 'rotate(-45deg) translate(5px, -5px)';
+            } else {
+                spans[0].style.transform = 'none';
+                spans[1].style.opacity = '1';
+                spans[2].style.transform = 'none';
+            }
+        }
+
+        // Переключение темы
+        function toggleTheme() {
+            const body = document.body;
+            const themeToggle = document.getElementById('themeToggle');
+            
+            body.classList.toggle('light-theme');
+            
+            if (body.classList.contains('light-theme')) {
+                themeToggle.textContent = '☀️';
+                localStorage.setItem('theme', 'light');
+            } else {
+                themeToggle.textContent = '🌙';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+        
+        // Инициализация при загрузке
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme');
+            const themeToggle = document.getElementById('themeToggle');
+            
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-theme');
+                themeToggle.textContent = '☀️';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Алгебра: Логарифмы</title>
+    
+    <script>
+        window.MathJax = {
+          tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']]
+          },
+          svg: {
+            fontCache: 'global'
+          }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #000000;
+            color: #ffffff;
+            line-height: 1.6;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(74, 158, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(74, 158, 255, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(74, 158, 255, 0.06) 0%, transparent 50%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(74, 158, 255, 0.03) 2px, rgba(74, 158, 255, 0.03) 4px),
+                repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(74, 158, 255, 0.03) 2px, rgba(74, 158, 255, 0.03) 4px);
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
+        body.light-theme::before {
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(74, 158, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(74, 158, 255, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(74, 158, 255, 0.10) 0%, transparent 50%);
+        }
+
+        body.light-theme::after {
+            background-image: 
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(74, 158, 255, 0.05) 2px, rgba(74, 158, 255, 0.05) 4px),
+                repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(74, 158, 255, 0.05) 2px, rgba(74, 158, 255, 0.05) 4px);
+            opacity: 0.5;
+        }
+
+        /* Animated background particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #4a9eff;
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: float 15s infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); }
+            25% { transform: translateY(-50px) translateX(50px); }
+            50% { transform: translateY(-100px) translateX(-30px); }
+            75% { transform: translateY(-70px) translateX(30px); }
+        }
+
+        /* --- СТИЛИ МЕНЮ --- */
+        .menu-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            z-index: 1001;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            padding: 8px;
+            background-color: #000000;
+            border-radius: 5px;
+        }
+
+        .menu-toggle span {
+            display: block;
+            height: 3px;
+            width: 100%;
+            background-color: #ffffff;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .menu-toggle:hover {
+            background-color: #1a1a1a;
+        }
+
+        .sidebar-menu {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 300px;
+            height: 100vh;
+            background-color: #111111;
+            border-right: 2px solid #333;
+            transition: left 0.3s ease;
+            z-index: 1000;
+            padding: 80px 20px 20px 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-menu.active {
+            left: 0;
+        }
+
+        .menu-item {
+            display: block;
+            padding: 15px 20px;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 1.1em;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            background-color: #1a1a1a;
+            transition: all 0.3s ease;
+        }
+
+        .menu-item:hover {
+            background-color: #2a2a2a;
+            transform: translateX(5px);
+        }
+
+        .menu-credit {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            text-align: center;
+            color: #888;
+            font-size: 0.85em;
+            padding-top: 20px;
+            border-top: 1px solid #333;
+        }
+
+        body.light-theme .menu-credit {
+            color: #666;
+            border-top-color: #ddd;
+        }
+
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+
+        .menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #000000;
+            border: none;
+            cursor: pointer;
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: all 0.3s ease;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        .theme-toggle:hover {
+            background-color: #1a1a1a;
+            transform: scale(1.1);
+        }
+
+        body.light-theme {
+            background-color: #ffffff;
+            color: #000000;
+        }
+
+        body.light-theme .menu-toggle {
+            background-color: #ffffff;
+            border: 2px solid #000000;
+        }
+
+        body.light-theme .menu-toggle span {
+            background-color: #000000;
+        }
+
+        body.light-theme .sidebar-menu {
+            background-color: #f5f5f5;
+            border-right-color: #ddd;
+        }
+
+        body.light-theme .menu-item {
+            background-color: #ffffff;
+            color: #000000;
+            border: 1px solid #ddd;
+        }
+
+        body.light-theme .menu-item:hover {
+            background-color: #e5e5e5;
+        }
+
+        body.light-theme .theme-toggle {
+            background-color: #ffffff;
+            border: none;
+        }
+
+        body.light-theme .theme-toggle:hover {
+            background-color: #f5f5f5;
+        }
+        /* --- КОНЕЦ СТИЛЕЙ МЕНЮ --- */
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            /* margin-top: 80px; УДАЛЕНО */
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 40px;
+            border-top: 2px solid #333;
+            color: #888;
+        }
+        
+        body.light-theme footer {
+            border-top-color: #ddd;
+            color: #666666;
+        }
+
+        /* Стили для статьи */
+        .article-body {
+            background-color: #111111;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 30px 40px;
+            margin-top: 80px; /* Добавлен отступ от кнопок меню */
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .article-body h1 {
+            font-size: 2.5em;
+            color: #ffffff;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .article-body h2 {
+            font-size: 2em;
+            color: #ffffff;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #333;
+        }
+        .article-body h3 {
+            font-size: 1.5em;
+            color: #4a9eff;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+        .article-body p, .article-body li {
+            color: #cccccc;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+        .article-body ul, .article-body ol {
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+        .formula {
+            background-color: #1a1a1a;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            margin: 20px 0;
+            font-size: 1.2em;
+            color: #f0f0f0;
+            text-align: center;
+            overflow-x: auto;
+        }
+        .note {
+            background-color: #1a1a1a;
+            border-left: 5px solid #4a9eff;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            color: #bbbbbb;
+        }
+
+        /* Стили для статьи (светлая тема) */
+        body.light-theme .article-body {
+            background-color: #f5f5f5;
+            border-color: #ddd;
+        }
+        body.light-theme .article-body h1 {
+            color: #000000;
+        }
+        body.light-theme .article-body h2 {
+            color: #000000;
+            border-bottom-color: #ddd;
+        }
+        body.light-theme .article-body h3 {
+            color: #0066cc;
+        }
+        body.light-theme .article-body p, body.light-theme .article-body li {
+            color: #333333;
+        }
+        body.light-theme .formula {
+            background-color: #ffffff;
+            border-color: #ddd;
+            color: #000000;
+        }
+        body.light-theme .note {
+            background-color: #eef5ff;
+            border-left-color: #0066cc;
+            color: #222222;
+        }
+    </style>
+</head>
+<body>
+    <div class="menu-toggle" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+    <div class="theme-toggle" onclick="toggleTheme()" id="themeToggle">🌙</div>
+    
+    <div class="menu-overlay" onclick="toggleMenu()"></div>
+    <div class="sidebar-menu" id="sidebarMenu">
+        <a href="../main.html" class="menu-item">На главную</a>
+        <div class="menu-credit">
+            &copy; 2025 Математика для школьников
+        </div>
+    </div>
+    <div class="particles" id="particles"></div>
+    
+    <div class="container">
+        <div class="article-body">
+            <h1>Алгебра: Логарифмы</h1>
+
+            <p>Логарифм — это операция, обратная возведению в степень. Логарифмы были введены для упрощения сложных вычислений (например, умножения и деления многозначных чисел) и сегодня являются фундаментальным понятием в математике.</p>
+
+            <h2>Определение логарифма</h2>
+            <p><b>Логарифмом</b> положительного числа $b$ по основанию $a$ (где $a > 0$ и $a \neq 1$) называется такое число $c$, что $a$ в степени $c$ равно $b$.</p>
+            
+            <p>Это записывается так:</p>
+            <div class="formula">
+                $$ \log_a(b) = c \quad \Leftrightarrow \quad a^c = b $$
+            </div>
+
+            <p><b>Примеры:</b></p>
+            <ul>
+                <li>$ \log_2(8) = 3 $, потому что $ 2^3 = 8 $</li>
+                <li>$ \log_{10}(100) = 2 $, потому что $ 10^2 = 100 $</li>
+                <li>$ \log_5(1) = 0 $, потому что $ 5^0 = 1 $</li>
+                <li>$ \log_3(\frac{1}{9}) = -2 $, потому что $ 3^{-2} = \frac{1}{3^2} = \frac{1}{9} $</li>
+            </ul>
+
+            <div class="note">
+                <b>Важные ограничения (ОДЗ):</b><br>
+                В выражении $ \log_a(b) $ всегда должны выполняться условия:
+                <ol>
+                    <li>Основание $a > 0$ (больше нуля)</li>
+                    <li>Основание $a \neq 1$ (не равно единице)</li>
+                    <li>Аргумент $b > 0$ (больше нуля)</li>
+                </ol>
+            </div>
+
+            <h3>Особые виды логарифмов</h3>
+            <ul>
+                <li><b>Десятичный логарифм:</b> Логарифм по основанию 10. Обозначается как $ \lg(b) $. ( $ \lg(b) = \log_{10}(b) $ )</li>
+                <li><b>Натуральный логарифм:</b> Логарифм по основанию $e$ (число Эйлера, $e \approx 2.718...$). Обозначается как $ \ln(b) $. ( $ \ln(b) = \log_e(b) $ )</li>
+            </ul>
+
+            <h2>Свойства логарифмов</h2>
+            <p>Эти свойства являются ключом к упрощению выражений и решению уравнений.</p>
+            <ul>
+                <li><b>Логарифм произведения:</b> $ \log_a(x \cdot y) = \log_a(x) + \log_a(y) $</li>
+                <li><b>Логарифм частного:</b> $ \log_a(\frac{x}{y}) = \log_a(x) - \log_a(y) $</li>
+                <li><b>Логарифм степени:</b> $ \log_a(x^p) = p \cdot \log_a(x) $</li>
+                <li><b>Логарифм от основания:</b> $ \log_a(a) = 1 $</li>
+                <li><b>Логарифм единицы:</b> $ \log_a(1) = 0 $</li>
+                <li><b>Формула перехода к новому основанию:</b> $ \log_a(b) = \frac{\log_c(b)}{\log_c(a)} $</li>
+                <li><b>Частный случай перехода:</b> $ \log_a(b) = \frac{1}{\log_b(a)} $</li>
+            </ul>
+            <p>Из этих свойств также следует <b>основное логарифмическое тождество</b>:</p>
+            <div class="formula">
+                $$ a^{\log_a(b)} = b $$
+            </div>
+
+
+            <h2>Решение логарифмических уравнений</h2>
+            <p><b>Логарифмическое уравнение</b> — это уравнение, в котором неизвестная (переменная) находится под знаком логарифма или в его основании.</p>
+            <p>Главный метод решения — <b>потенцирование</b>, то есть переход от равенства логарифмов к равенству их аргументов.</p>
+            <p>Если $ \log_a(f(x)) = \log_a(g(x)) $, то $ f(x) = g(x) $.</p>
+
+            <p><b>Важно:</b> При решении логарифмических уравнений всегда необходимо проверять <b>ОДЗ</b> (Область Допустимых Значений) или делать проверку найденных корней.</p>
+
+            <h3>Пример 1:</h3>
+            <p>Решить уравнение $ \log_3(x + 2) = \log_3(4x - 7) $</p>
+            <p>1. Приравниваем аргументы: $ x + 2 = 4x - 7 $</p>
+            <p>2. Решаем линейное уравнение: $ 2 + 7 = 4x - x \Rightarrow 9 = 3x \Rightarrow x = 3 $</p>
+            <p>3. Проверяем ОДЗ. Оба аргумента должны быть больше нуля:
+            <ul>
+                <li>$ x + 2 \Rightarrow 3 + 2 = 5 > 0 $ (Верно)</li>
+                <li>$ 4x - 7 \Rightarrow 4(3) - 7 = 12 - 7 = 5 > 0 $ (Верно)</li>
+            </ul>
+            <b>Ответ:</b> $ x = 3 $.</p>
+
+            <h3>Пример 2:</h3>
+            <p>Решить уравнение $ \log_2(x - 1) + \log_2(x - 2) = 1 $</p>
+            <p>1. Используем свойство логарифма произведения: $ \log_2((x - 1)(x - 2)) = 1 $</p>
+            <p>2. Представляем $1$ как логарифм по основанию 2: $ 1 = \log_2(2) $</p>
+            <p>3. Получаем: $ \log_2((x - 1)(x - 2)) = \log_2(2) $</p>
+            <p>4. Приравниваем аргументы: $ (x - 1)(x - 2) = 2 $</p>
+            <p>5. Раскрываем скобки и решаем квадратное уравнение: $ x^2 - 2x - x + 2 = 2 \Rightarrow x^2 - 3x = 0 \Rightarrow x(x - 3) = 0 $</p>
+            <p>6. Получаем два корня: $ x_1 = 0 $ и $ x_2 = 3 $.</p>
+            <p>7. Проверяем ОДЗ (оба исходных аргумента $x-1$ и $x-2$ должны быть $> 0$):
+            <ul>
+                <li>Проверяем $ x_1 = 0 $: $ (0 - 1) = -1 $. Это $ < 0 $. Корень не подходит.</li>
+                <li>Проверяем $ x_2 = 3 $: $ (3 - 1) = 2 > 0 $ и $ (3 - 2) = 1 > 0 $. Корень подходит.</li>
+            </ul>
+            <b>Ответ:</b> $ x = 3 $.</p>
+
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Математика для школьников. Образовательный ресурс.</p>
+    </footer>
+
+    <script>
+        /* ДОБАВЛЕНА ФУНКЦИЯ */
+        function toggleMenu() {
+            const menu = document.getElementById('sidebarMenu');
+            const overlay = document.querySelector('.menu-overlay');
+            menu.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            const themeToggle = document.getElementById('themeToggle');
+            body.classList.toggle('light-theme');
+            
+            if (body.classList.contains('light-theme')) {
+                themeToggle.textContent = '☀️';
+                localStorage.setItem('theme', 'light');
+            } else {
+                themeToggle.textContent = '🌙';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Generate random particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            if (!particlesContainer) return;
+            const particleCount = 30;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Загружаем сохраненную тему при загрузке страницы
+        window.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+
+            const savedTheme = localStorage.getItem('theme');
+            const themeToggle = document.getElementById('themeToggle');
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-theme');
+                themeToggle.textContent = '☀️';
+            } else {
+                themeToggle.textContent = '🌙';
+            }
+        });
+    </script>
+</body>
+</html>

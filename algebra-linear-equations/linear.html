@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Алгебра: Линейные уравнения — ILAMath</title>
+    
+    <!-- Подключаем современные шрифты -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Outfit:wght@500;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- CSS Variables & Reset --- */
+        :root {
+            /* Dark Theme (Default) */
+            --bg-body: #0f1115;
+            --bg-gradient-1: rgba(74, 158, 255, 0.15);
+            --bg-gradient-2: rgba(124, 77, 255, 0.15);
+            
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-blur: blur(12px);
+            
+            --text-main: #ffffff;
+            --text-muted: #a0a0b0;
+            
+            --primary: #4a9eff;
+            --primary-glow: rgba(74, 158, 255, 0.5);
+            --accent: #7c4dff;
+
+            /* --- ЦВЕТ ДЛЯ ЗАГОЛОВКОВ ПРИМЕРОВ И ФОРМУЛ (ЯРКО-РОЗОВЫЙ) --- */
+            --code-text: #ff4081; 
+            
+            --nav-bg: rgba(15, 17, 21, 0.8);
+            
+            /* Specific for article elements */
+            --code-bg: rgba(255, 255, 255, 0.05);
+            
+            /* --- ЦВЕТ ЛЕВОЙ ПОЛОСКИ (СОВПАДАЕТ С ЗАГОЛОВКОМ) --- */
+            --example-border: #ff4081;
+        }
+
+        body.light-theme {
+            --bg-body: #f0f4f8;
+            --bg-gradient-1: rgba(74, 158, 255, 0.1);
+            --bg-gradient-2: rgba(124, 77, 255, 0.1);
+            
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(0, 0, 0, 0.05);
+            
+            --text-main: #1a1a2e;
+            --text-muted: #555566;
+            
+            --primary: #0066cc;
+            --primary-glow: rgba(0, 102, 204, 0.3);
+            
+            --nav-bg: rgba(255, 255, 255, 0.8);
+            
+            /* Цвет для светлой темы (Темно-розовый) */
+            --code-text: #c2185b;
+            --example-border: #c2185b;
+            
+            --code-bg: rgba(0, 0, 0, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.7;
+            overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* --- Backgrounds --- */
+        .bg-blobs {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; overflow: hidden;
+        }
+
+        .blob {
+            position: absolute; border-radius: 50%;
+            filter: blur(80px); opacity: 0.6;
+        }
+
+        .blob-1 {
+            top: -10%; left: -10%; width: 50vw; height: 50vw;
+            background: var(--bg-gradient-1);
+            animation: floatBlob 20s infinite alternate;
+        }
+
+        .blob-2 {
+            bottom: -10%; right: -10%; width: 40vw; height: 40vw;
+            background: var(--bg-gradient-2);
+            animation: floatBlob 15s infinite alternate-reverse;
+        }
+
+        @keyframes floatBlob {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        body::after {
+            content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: linear-gradient(rgba(74, 158, 255, 0.03) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(74, 158, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px; z-index: -1; pointer-events: none;
+        }
+
+        /* --- Navigation --- */
+        nav {
+            position: fixed; top: 0; width: 100%;
+            background: var(--nav-bg);
+            backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+            z-index: 1000; border-bottom: 1px solid var(--glass-border);
+            padding: 1rem 0; transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1200px; margin: 0 auto; padding: 0 2rem;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
+        .logo {
+            font-family: 'Outfit', sans-serif; font-size: 1.8rem; font-weight: 800;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-decoration: none; letter-spacing: -1px;
+        }
+
+        .nav-links { display: flex; gap: 2.5rem; align-items: center; }
+
+        .nav-links a {
+            color: var(--text-main); text-decoration: none; font-weight: 500;
+            position: relative; transition: color 0.3s;
+        }
+
+        .nav-links a:hover { color: var(--primary); }
+
+        /* --- Controls --- */
+        .controls { display: flex; align-items: center; gap: 1rem; }
+
+        .theme-toggle {
+            width: 40px; height: 40px; border-radius: 50%;
+            background: var(--glass-bg); border: 1px solid var(--glass-border);
+            color: var(--text-main); display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover { background: var(--primary); color: white; transform: rotate(15deg); }
+
+        .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; z-index: 1002; }
+        .hamburger span { width: 25px; height: 3px; background-color: var(--text-main); transition: 0.3s; }
+
+        /* --- Article Styles --- */
+        .article-hero {
+            padding: 120px 2rem 60px; text-align: center;
+        }
+
+        .article-hero h1 {
+            font-family: 'Outfit', sans-serif; font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 800; margin-bottom: 1rem;
+            background: linear-gradient(to right, var(--text-main), var(--primary));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .article-hero p {
+            font-size: 1.25rem; color: var(--text-muted); max-width: 700px; margin: 0 auto;
+            animation: fadeInUp 0.8s ease 0.2s backwards;
+        }
+
+        .container {
+            max-width: 900px; margin: 0 auto; padding: 0 2rem 80px;
+        }
+
+        .article-box {
+            background: var(--glass-bg); border: 1px solid var(--glass-border);
+            border-radius: 24px; padding: 40px;
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            animation: fadeInUp 0.8s ease 0.4s backwards;
+        }
+
+        .article-content h2 {
+            font-family: 'Outfit', sans-serif; font-size: 1.8rem;
+            color: var(--primary); margin-top: 2.5rem; margin-bottom: 1.2rem;
+            padding-bottom: 0.5rem; border-bottom: 1px solid var(--glass-border);
+        }
+
+        .article-content h3 {
+            font-family: 'Outfit', sans-serif; font-size: 1.4rem;
+            color: var(--text-main); margin-top: 2rem; margin-bottom: 1rem;
+        }
+
+        .article-content p { margin-bottom: 1.2rem; color: var(--text-muted); }
+
+        /* Lists */
+        .article-content ol, .article-content ul { padding-left: 1.5rem; margin-bottom: 1.5rem; color: var(--text-muted); }
+        .article-content li { margin-bottom: 0.5rem; }
+        
+        /* Custom Components */
+        .math-block {
+            background: var(--code-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            text-align: center;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            color: var(--code-text);
+            font-weight: 700;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.05);
+        }
+
+        .example-box {
+            background: linear-gradient(90deg, rgba(74, 158, 255, 0.05), transparent);
+            border-left: 4px solid var(--example-border); /* ИСПОЛЬЗУЕТСЯ ЦВЕТ ПОЛОСКИ */
+            border-radius: 0 12px 12px 0;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .example-box h4 {
+            color: var(--code-text);
+            margin-bottom: 0.8rem; 
+            font-family: 'Outfit', sans-serif;
+        }
+
+        /* --- Related Cards (Grid) --- */
+        .related-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px; margin-top: 2rem;
+        }
+
+        .card {
+            background: var(--glass-bg); border: 1px solid var(--glass-border);
+            border-radius: 16px; padding: 20px;
+            transition: transform 0.3s, border-color 0.3s;
+            display: flex; flex-direction: column;
+        }
+
+        .card:hover { transform: translateY(-5px); border-color: var(--primary); }
+
+        .card h3 { font-family: 'Outfit', sans-serif; font-size: 1.2rem; margin-bottom: 10px; color: var(--text-main); }
+        .card p { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px; flex-grow: 1; }
+        
+        .card-link {
+            color: var(--primary); text-decoration: none; font-weight: 600; font-size: 0.9rem;
+            display: flex; align-items: center; gap: 5px;
+        }
+        .card-link:hover { gap: 10px; }
+
+        /* --- Support & Footer --- */
+        .support-box {
+            background: linear-gradient(135deg, rgba(74, 158, 255, 0.1), rgba(124, 77, 255, 0.1));
+            border: 1px solid var(--glass-border); border-radius: 20px;
+            padding: 40px; text-align: center; margin-top: 60px;
+        }
+
+        .support-box h3 { color: var(--primary); font-size: 1.5rem; margin-bottom: 10px; }
+        .support-box a { color: var(--text-main); font-size: 1.2rem; font-weight: 700; text-decoration: none; }
+
+        footer {
+            text-align: center; padding: 40px 20px; margin-top: 40px;
+            border-top: 1px solid var(--glass-border); color: var(--text-muted); background: var(--nav-bg);
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .hamburger { display: flex; }
+            .nav-links {
+                position: fixed; top: 0; right: -100%; width: 75%; height: 100vh;
+                background: var(--bg-body); flex-direction: column; justify-content: center;
+                border-left: 1px solid var(--glass-border); transition: 0.4s ease;
+                backdrop-filter: blur(20px);
+            }
+            .nav-links.active { right: 0; }
+            .article-box { padding: 25px; }
+            .article-hero h1 { font-size: 2.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Фон -->
+    <div class="bg-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <nav>
+        <div class="nav-container">
+            <a href="../main.html" class="logo">📐 ILAMath</a>
+            
+            <div class="nav-links" id="navLinks">
+                <a href="../main.html">Главная</a>
+                <a href="../main.html#grades-7-9">7-9 классы</a>
+                <a href="../main.html#grades-10-11">10-11 классы</a>
+            </div>
+
+            <div class="controls">
+                <div class="theme-toggle" onclick="toggleTheme()" id="themeToggle" title="Сменить тему">🌙</div>
+                <div class="hamburger" onclick="toggleMenu()">
+                    <span></span><span></span><span></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero заголовок -->
+    <section class="article-hero">
+        <h1>Линейные уравнения</h1>
+        <p>Основы решения уравнений: от простых формул до систем с двумя переменными.</p>
+    </section>
+
+    <div class="container">
+        
+        <!-- Основной контент -->
+        <article class="article-box">
+            <div class="article-content">
+                
+                <h2>Что такое линейное уравнение?</h2>
+                <p>Линейное уравнение — это уравнение, в котором переменные входят только в первой степени и не перемножаются друг с другом. Общий вид линейного уравнения с одной переменной:</p>
+                
+                <div class="math-block">ax + b = 0</div>
+                
+                <p>где <strong>a</strong> и <strong>b</strong> — числа (коэффициенты), причем <strong>a ≠ 0</strong>, а <strong>x</strong> — неизвестная переменная.</p>
+
+                <h2>Решение линейных уравнений с одной переменной</h2>
+                <h3>Алгоритм решения:</h3>
+                <ol>
+                    <li>Раскрыть скобки (если есть).</li>
+                    <li>Перенести все слагаемые с переменной в одну часть уравнения, а числа — в другую.</li>
+                    <li>Привести подобные слагаемые.</li>
+                    <li>Разделить обе части уравнения на коэффициент при переменной.</li>
+                </ol>
+
+                <div class="example-box">
+                    <h4>Пример 1: Простое уравнение</h4>
+                    <p>Решить уравнение: <strong>3x + 5 = 14</strong></p>
+                    <p><strong>Решение:</strong></p>
+                    <ul>
+                        <li>Переносим 5 вправо: 3x = 14 - 5</li>
+                        <li>Вычисляем: 3x = 9</li>
+                        <li>Делим на 3: x = 9 ÷ 3</li>
+                    </ul>
+                    <p><strong>Ответ: x = 3</strong></p>
+                </div>
+
+                <div class="example-box">
+                    <h4>Пример 2: Уравнение со скобками</h4>
+                    <p>Решить уравнение: <strong>2(x - 3) = 4x + 6</strong></p>
+                    <p><strong>Решение:</strong></p>
+                    <ul>
+                        <li>Раскрываем скобки: 2x - 6 = 4x + 6</li>
+                        <li>Переносим слагаемые: 2x - 4x = 6 + 6</li>
+                        <li>Приводим подобные: -2x = 12</li>
+                        <li>Делим на -2: x = -6</li>
+                    </ul>
+                    <p><strong>Ответ: x = -6</strong></p>
+                </div>
+
+                <h2>Линейные уравнения с несколькими переменными</h2>
+                <p>Линейное уравнение с двумя переменными имеет вид:</p>
+                <div class="math-block">ax + by = c</div>
+                <p>где <strong>a</strong>, <strong>b</strong>, <strong>c</strong> — числа, причем <strong>a</strong> и <strong>b</strong> не равны нулю одновременно.</p>
+
+                <h3>Особенности:</h3>
+                <ul>
+                    <li>Такое уравнение имеет бесконечно много решений.</li>
+                    <li>Решения можно представить в виде пар чисел (x, y).</li>
+                    <li>Графиком линейного уравнения с двумя переменными является прямая линия.</li>
+                </ul>
+
+                <div class="example-box">
+                    <h4>Пример 3: Поиск решений</h4>
+                    <p>Найти пару решений для: <strong>2x + 3y = 12</strong></p>
+                    <p>Выразим y через x: y = (12 - 2x) / 3</p>
+                    <ul>
+                        <li>Если x = 0, то y = 4 → (0, 4)</li>
+                        <li>Если x = 3, то y = 2 → (3, 2)</li>
+                        <li>Если x = 6, то y = 0 → (6, 0)</li>
+                    </ul>
+                </div>
+
+                <h2>Системы линейных уравнений</h2>
+                <p>Система — это несколько уравнений, которые решаются совместно. Пример системы:</p>
+                <div class="math-block">
+                    a₁x + b₁y = c₁<br>
+                    a₂x + b₂y = c₂
+                </div>
+
+                <h3>Методы решения:</h3>
+                <ol>
+                    <li><strong>Метод подстановки:</strong> выразить одну переменную через другую и подставить во второе уравнение.</li>
+                    <li><strong>Метод сложения:</strong> сложить уравнения так, чтобы одна переменная исчезла.</li>
+                    <li><strong>Графический метод:</strong> найти точку пересечения прямых.</li>
+                </ol>
+
+                <div class="example-box">
+                    <h4>Пример 4: Метод подстановки</h4>
+                    <p>Система: { x + y = 5; 2x - y = 1 }</p>
+                    <ul>
+                        <li>Из 1-го уравнения: y = 5 - x</li>
+                        <li>Подставляем во 2-е: 2x - (5 - x) = 1</li>
+                        <li>2x - 5 + x = 1 → 3x = 6 → x = 2</li>
+                        <li>Находим y: y = 5 - 2 = 3</li>
+                    </ul>
+                    <p><strong>Ответ: (2, 3)</strong></p>
+                </div>
+
+                <div class="example-box">
+                    <h4>Пример 5: Метод сложения</h4>
+                    <p>Система: { 3x + 2y = 7; x - 2y = -1 }</p>
+                    <ul>
+                        <li>Складываем уравнения: (3x + x) + (2y - 2y) = 7 - 1</li>
+                        <li>4x = 6 → x = 1.5</li>
+                        <li>Подставляем x во 2-е уравнение: 1.5 - 2y = -1</li>
+                        <li>-2y = -2.5 → y = 1.25</li>
+                    </ul>
+                    <p><strong>Ответ: (1.5, 1.25)</strong></p>
+                </div>
+
+            </div>
+        </article>
+
+        <!-- Дополнительные материалы (Сетка карточек) -->
+        <div class="article-content">
+            <h2>Полезные материалы</h2>
+            <div class="related-grid">
+                <div class="card">
+                    <h3>Линейное уравнение (Wiki)</h3>
+                    <p>Подробная теория, виды уравнений и их свойства.</p>
+                    <a href="https://ru.wikipedia.org/wiki/Линейное_уравнение" target="_blank" class="card-link">Читать на Вики →</a>
+                </div>
+
+                <div class="card">
+                    <h3>Метод Гаусса</h3>
+                    <p>Универсальный метод для решения больших систем уравнений.</p>
+                    <a href="articles/gauss-method.html" class="card-link">Скоро →</a>
+                </div>
+
+                <div class="card">
+                    <h3>Матрицы и определители</h3>
+                    <p>Как решать системы уравнений с помощью матриц.</p>
+                    <a href="articles/matrices-determinants.html" class="card-link">Скоро →</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Поддержка -->
+        <div class="support-box">
+            <h3>💡 Остались вопросы?</h3>
+            <p>Наша команда преподавателей готова помочь с любой задачей.</p>
+            <br>
+            <a href="mailto:support@ilafrommath.tech">support@ilafrommath.tech</a>
+        </div>
+
+    </div>
+
+    <footer>
+        <p>&copy; 2025 ILAMath. Образовательный проект.</p>
+    </footer>
+
+    <script>
+        // Мобильное меню
+        function toggleMenu() {
+            const navLinks = document.getElementById('navLinks');
+            const spans = document.querySelectorAll('.hamburger span');
+            
+            navLinks.classList.toggle('active');
+            
+            if (navLinks.classList.contains('active')) {
+                spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+                spans[1].style.opacity = '0';
+                spans[2].style.transform = 'rotate(-45deg) translate(5px, -5px)';
+            } else {
+                spans[0].style.transform = 'none';
+                spans[1].style.opacity = '1';
+                spans[2].style.transform = 'none';
+            }
+        }
+
+        // Переключение темы
+        function toggleTheme() {
+            const body = document.body;
+            const themeToggle = document.getElementById('themeToggle');
+            
+            body.classList.toggle('light-theme');
+            
+            if (body.classList.contains('light-theme')) {
+                themeToggle.textContent = '☀️';
+                localStorage.setItem('theme', 'light');
+            } else {
+                themeToggle.textContent = '🌙';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+        
+        // Инициализация
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme');
+            const themeToggle = document.getElementById('themeToggle');
+            
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-theme');
+                themeToggle.textContent = '☀️';
+            }
+        });
+    </script>
+</body>
+</html>

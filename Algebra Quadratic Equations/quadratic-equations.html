@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Алгебра: Квадратные уравнения — ILAMath</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Outfit:wght@500;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- CSS Variables & Reset --- */
+        :root {
+            --bg-body: #0f1115;
+            --bg-gradient-1: rgba(74, 158, 255, 0.15);
+            --bg-gradient-2: rgba(124, 77, 255, 0.15);
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-blur: blur(12px);
+            --text-main: #ffffff;
+            --text-muted: #a0a0b0;
+            --primary: #4a9eff;
+            --primary-glow: rgba(74, 158, 255, 0.5);
+            
+            /* РОЗОВЫЙ АКЦЕНТ (Был фиолетовый #7c4dff) */
+            --accent: #ff4081;
+            
+            --nav-bg: rgba(15, 17, 21, 0.8);
+        }
+
+        body.light-theme {
+            --bg-body: #f0f4f8;
+            --bg-gradient-1: rgba(74, 158, 255, 0.1);
+            --bg-gradient-2: rgba(124, 77, 255, 0.1);
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(0, 0, 0, 0.05);
+            --text-main: #1a1a2e;
+            --text-muted: #555566;
+            --primary: #0066cc;
+            --primary-glow: rgba(0, 102, 204, 0.3);
+            
+            /* ТЕМНО-РОЗОВЫЙ АКЦЕНТ ДЛЯ СВЕТЛОЙ ТЕМЫ */
+            --accent: #c2185b;
+            
+            --nav-bg: rgba(255, 255, 255, 0.8);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Backgrounds */
+        .bg-blobs {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%; z-index: -1; overflow: hidden;
+        }
+        .blob {
+            position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.6;
+        }
+        .blob-1 {
+            top: -10%; left: -10%; width: 50vw; height: 50vw;
+            background: var(--bg-gradient-1); animation: floatBlob 20s infinite alternate;
+        }
+        .blob-2 {
+            bottom: -10%; right: -10%; width: 40vw; height: 40vw;
+            background: var(--bg-gradient-2); animation: floatBlob 15s infinite alternate-reverse;
+        }
+        @keyframes floatBlob {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+        body::after {
+            content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: linear-gradient(rgba(74, 158, 255, 0.03) 1px, transparent 1px),
+                            linear-gradient(90deg, rgba(74, 158, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px; z-index: -1; pointer-events: none;
+        }
+
+        /* Nav */
+        nav {
+            position: fixed; top: 0; width: 100%; background: var(--nav-bg);
+            backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+            z-index: 1000; border-bottom: 1px solid var(--glass-border); padding: 1rem 0;
+            transition: all 0.3s ease;
+        }
+        .nav-container {
+            max-width: 1200px; margin: 0 auto; padding: 0 2rem;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .logo {
+            font-family: 'Outfit', sans-serif; font-size: 1.8rem; font-weight: 800;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-decoration: none; letter-spacing: -1px;
+        }
+        .nav-links { display: flex; gap: 2.5rem; align-items: center; }
+        .nav-links a {
+            color: var(--text-main); text-decoration: none; font-weight: 500;
+            position: relative; transition: color 0.3s;
+        }
+        .nav-links a:hover { color: var(--primary); }
+        .nav-links a::after {
+            content: ''; position: absolute; bottom: -5px; left: 0; width: 0; height: 2px;
+            background: var(--primary); transition: width 0.3s ease;
+        }
+        .nav-links a:hover::after { width: 100%; }
+
+        /* Controls */
+        .controls { display: flex; align-items: center; gap: 1rem; }
+        .theme-toggle {
+            width: 40px; height: 40px; border-radius: 50%; background: var(--glass-bg);
+            border: 1px solid var(--glass-border); color: var(--text-main);
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .theme-toggle:hover { background: var(--primary); color: white; transform: rotate(15deg); }
+        .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; z-index: 1002; }
+        .hamburger span { width: 25px; height: 3px; background-color: var(--text-main); transition: 0.3s; }
+
+        /* Page Specific Headers */
+        .page-header {
+            padding: 120px 2rem 40px; text-align: center;
+        }
+        .page-header h1 {
+            font-family: 'Outfit', sans-serif; font-size: clamp(2rem, 4vw, 3.5rem);
+            font-weight: 800; margin-bottom: 1rem;
+            background: linear-gradient(to right, var(--text-main), var(--primary));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            animation: fadeInUp 0.8s ease;
+        }
+        .page-header p {
+            font-size: 1.2rem; color: var(--text-muted); max-width: 700px; margin: 0 auto;
+            animation: fadeInUp 0.8s ease 0.2s backwards;
+        }
+
+        /* Content Layout */
+        .container { max-width: 1000px; margin: 0 auto; padding: 0 2rem 80px; }
+        
+        /* Glass Cards & Typography */
+        .card {
+            background: var(--glass-bg); border: 1px solid var(--glass-border);
+            border-radius: 20px; padding: 35px; backdrop-filter: var(--glass-blur);
+            margin-bottom: 30px; transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            border-color: var(--primary); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        .card h2 {
+            font-family: 'Outfit', sans-serif; font-size: 1.8rem; margin-bottom: 1.5rem;
+            color: var(--text-main); border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 10px;
+        }
+        .card h3 {
+            font-family: 'Outfit', sans-serif; font-size: 1.4rem; margin: 1.5rem 0 1rem;
+            color: var(--primary);
+        }
+        .card p, .card li { color: var(--text-muted); margin-bottom: 1rem; font-size: 1.05rem; }
+        .card ul, .card ol { margin-left: 1.5rem; margin-bottom: 1.5rem; }
+
+        /* Math Specific Styles */
+        .formula-box {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 1.3rem;
+            color: var(--primary);
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.1);
+        }
+        body.light-theme .formula-box {
+            background: rgba(74, 158, 255, 0.08);
+            color: var(--primary);
+        }
+
+        .example-box {
+            background: var(--glass-bg);
+            border-left: 4px solid var(--accent); /* Uses pink accent */
+            padding: 20px;
+            border-radius: 0 12px 12px 0;
+            margin: 25px 0;
+        }
+        .example-box h4 {
+            color: var(--accent); /* Uses pink accent */
+            font-weight: 700; margin-bottom: 10px; font-family: 'Outfit', sans-serif;
+        }
+        
+        /* Support Banner */
+        .support-box {
+            background: linear-gradient(135deg, rgba(74, 158, 255, 0.1), rgba(124, 77, 255, 0.1));
+            border: 1px solid var(--glass-border); border-radius: 20px;
+            padding: 40px; text-align: center; margin-top: 40px;
+        }
+        .support-box h3 { color: var(--primary); font-size: 1.5rem; margin-bottom: 10px; }
+        .support-box a { color: var(--text-main); font-size: 1.2rem; text-decoration: none; font-weight: 700; }
+
+        /* Footer */
+        footer {
+            text-align: center; padding: 40px 20px; border-top: 1px solid var(--glass-border);
+            color: var(--text-muted); background: var(--nav-bg);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .reveal { opacity: 0; transform: translateY(50px); transition: all 0.6s ease; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .nav-links {
+                position: fixed; top: 0; right: -100%; width: 70%; height: 100vh;
+                background: var(--bg-body); flex-direction: column; justify-content: center;
+                border-left: 1px solid var(--glass-border); transition: 0.4s ease;
+                backdrop-filter: blur(20px); box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+            }
+            .nav-links.active { right: 0; }
+            .hamburger { display: flex; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <nav>
+        <div class="nav-container">
+            <a href="../main.html" class="logo">📐 ILAMath</a>
+            <div class="nav-links" id="navLinks">
+                <a href="../main.html">Главная</a>
+                <a href="../main.html#grades-7-9">7-9 классы</a>
+                <a href="../main.html#grades-10-11">10-11 классы</a>
+                <a href="mailto:support@ilafrommath.tech">Поддержка</a>
+            </div>
+            <div class="controls">
+                <div class="theme-toggle" onclick="toggleTheme()" id="themeToggle">🌙</div>
+                <div class="hamburger" onclick="toggleMenu()">
+                    <span></span><span></span><span></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <header class="page-header">
+        <h1>Квадратные уравнения</h1>
+        <p>Полное руководство: определение, дискриминант, теорема Виета и примеры решений</p>
+    </header>
+
+    <div class="container">
+        
+        <div class="card reveal">
+            <h2>Что такое квадратное уравнение?</h2>
+            <p>Квадратное уравнение — это уравнение вида:</p>
+            <div class="formula-box">ax² + bx + c = 0</div>
+            <p>где <strong>a</strong>, <strong>b</strong>, <strong>c</strong> — числа (коэффициенты), причем <strong>a ≠ 0</strong>, а <strong>x</strong> — неизвестная переменная.</p>
+            <p>Коэффициенты имеют свои названия:</p>
+            <ul>
+                <li><strong>a</strong> — старший коэффициент (при x²)</li>
+                <li><strong>b</strong> — второй коэффициент (при x)</li>
+                <li><strong>c</strong> — свободный член</li>
+            </ul>
+        </div>
+
+        <div class="card reveal">
+            <h2>Дискриминант</h2>
+            <p>Дискриминант (D) — ключевое число для решения квадратного уравнения. Формула вычисления:</p>
+            <div class="formula-box">D = b² - 4ac</div>
+            <p>Он определяет количество корней:</p>
+            <ul>
+                <li><strong>D > 0</strong> — два различных действительных корня</li>
+                <li><strong>D = 0</strong> — один корень (или два совпадающих)</li>
+                <li><strong>D < 0</strong> — действительных корней нет</li>
+            </ul>
+        </div>
+
+        <div class="card reveal">
+            <h2>Формула корней</h2>
+            <p>Если D ≥ 0, корни находятся по формуле:</p>
+            <div class="formula-box">x₁,₂ = (-b ± √D) / (2a)</div>
+            <p>Если D = 0, формула упрощается до <strong>x = -b / (2a)</strong>.</p>
+        </div>
+
+        <div class="card reveal">
+            <h2>Примеры решений</h2>
+            
+            <div class="example-box">
+                <h4>Пример 1: Два корня (D > 0)</h4>
+                <p><strong>Уравнение:</strong> x² - 5x + 6 = 0</p>
+                <p>1. Коэффициенты: a = 1, b = -5, c = 6</p>
+                <p>2. D = (-5)² - 4·1·6 = 25 - 24 = 1</p>
+                <p>3. Корни: <br>
+                   x₁ = (5 + 1)/2 = 3 <br>
+                   x₂ = (5 - 1)/2 = 2</p>
+                <p><strong>Ответ:</strong> 3; 2</p>
+            </div>
+
+            <div class="example-box">
+                <h4>Пример 2: Один корень (D = 0)</h4>
+                <p><strong>Уравнение:</strong> x² - 4x + 4 = 0</p>
+                <p>1. Коэффициенты: a = 1, b = -4, c = 4</p>
+                <p>2. D = (-4)² - 4·1·4 = 16 - 16 = 0</p>
+                <p>3. Корень: x = -(-4)/2 = 2</p>
+                <p><strong>Ответ:</strong> 2</p>
+            </div>
+
+            <div class="example-box">
+                <h4>Пример 3: Нет решений (D < 0)</h4>
+                <p><strong>Уравнение:</strong> x² + 2x + 5 = 0</p>
+                <p>1. Коэффициенты: a = 1, b = 2, c = 5</p>
+                <p>2. D = 2² - 4·1·5 = 4 - 20 = -16</p>
+                <p><strong>Ответ:</strong> действительных корней нет</p>
+            </div>
+        </div>
+
+        <div class="card reveal">
+            <h2>Теорема Виета</h2>
+            <p>Позволяет быстро находить корни приведенного квадратного уравнения (где a=1) или проверять решение.</p>
+            <div class="formula-box">
+                x₁ + x₂ = -b/a<br>
+                x₁ · x₂ = c/a
+            </div>
+            <div class="example-box">
+                <h4>Пример проверки</h4>
+                <p>Для уравнения x² - 5x + 6 = 0 мы нашли корни 3 и 2.</p>
+                <p>Сумма: 3 + 2 = 5 (равно -b, так как a=1) ✅</p>
+                <p>Произведение: 3 · 2 = 6 (равно c) ✅</p>
+            </div>
+        </div>
+
+        <div class="card reveal">
+            <h2>Неполные уравнения</h2>
+            <p>Уравнения, где b=0 или c=0.</p>
+            
+            <h3>1. Вид ax² + bx = 0 (c = 0)</h3>
+            <p>Решается вынесением x за скобки: x(ax + b) = 0.</p>
+            <p>Корни всегда: <strong>0</strong> и <strong>-b/a</strong>.</p>
+
+            <h3>2. Вид ax² + c = 0 (b = 0)</h3>
+            <p>Преобразуется в x² = -c/a.</p>
+            <p>Решения есть, если -c/a ≥ 0: <strong>x = ±√(-c/a)</strong>.</p>
+        </div>
+
+        <div class="support-box reveal">
+            <h3>💡 Нужна помощь с решением?</h3>
+            <p>Не понимаешь тему? Напиши нам, мы поможем разобраться!</p>
+            <br>
+            <a href="mailto:support@ilafrommath.tech">support@ilafrommath.tech</a>
+        </div>
+
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Алгебра: Квадратные уравнения. ILAMath.</p>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            const navLinks = document.getElementById('navLinks');
+            const spans = document.querySelectorAll('.hamburger span');
+            navLinks.classList.toggle('active');
+            if (navLinks.classList.contains('active')) {
+                spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+                spans[1].style.opacity = '0';
+                spans[2].style.transform = 'rotate(-45deg) translate(5px, -5px)';
+            } else {
+                spans[0].style.transform = 'none';
+                spans[1].style.opacity = '1';
+                spans[2].style.transform = 'none';
+            }
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            const themeToggle = document.getElementById('themeToggle');
+            body.classList.toggle('light-theme');
+            if (body.classList.contains('light-theme')) {
+                themeToggle.textContent = '☀️';
+                localStorage.setItem('theme', 'light');
+            } else {
+                themeToggle.textContent = '🌙';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        function reveal() {
+            const reveals = document.querySelectorAll('.reveal');
+            const windowHeight = window.innerHeight;
+            const elementVisible = 100;
+            reveals.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                if (elementTop < windowHeight - elementVisible) {
+                    element.classList.add('active');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', reveal);
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme');
+            const themeToggle = document.getElementById('themeToggle');
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-theme');
+                themeToggle.textContent = '☀️';
+            }
+            reveal();
+        });
+    </script>
+</body>
+</html>
